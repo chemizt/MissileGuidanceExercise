@@ -12,16 +12,11 @@
 #include "utils.hpp"
 
 using std::cout;
-using std::string;
 using std::map;
 using std::ofstream;
 using std::stod;
-using std::fixed;
-using std::setprecision;
-using std::locale;
 using std::ios_base;
 using std::vector;
-using std::stringstream;
 using std::to_string;
 
 #pragma region SIM_PARAMETERS
@@ -35,13 +30,12 @@ using std::to_string;
 #define MISSILE_ENGINE_BURN_TIME 6
 #define POLAR_CURVE_BLADE_COEFFICIENT 1.5
 #define GRAVITATIONAL_ACCELERATION 9.80665 
-#define SIM_TIME_RESOLUTION_SECONDS 0.1
+#define SIM_TIME_RESOLUTION_SECONDS 0.01
 
 map<double, double> dragCoefficients {{0.5, 0.012}, {0.9, 0.015}, {1.2, 0.046}, {1.5, 0.044}, {2.0, 0.038}, {3.0, 0.030}, {4.0, 0.026}};
 #pragma endregion
 
 #define OUTPUT_FILE_NAME "outputData.csv"
-#define STANDARD_PRECISION 5
 
 vector<string> fileOutput;
 vector<string> stdOutput;
@@ -84,8 +78,7 @@ class MovingObject // базовый класс движущихся объек�
         void basicMove();
     
     protected:
-        void translateActingVectors(); // сдвигает действующие на объект векторы в соответствии с его новой позицией
-        void rotateActingVectors(double angle); // поворачивает действующие на объект векторы в соответствии с углом, на который поворачивает объект
+        void _rotateActingVectors(double angle); // поворачивает действующие на объект векторы в соответствии с углом, на который поворачивает объект
         double _X;
         double _Y;
         double _speed;
@@ -106,6 +99,27 @@ class Target : public MovingObject // класс целей - дополните
         double _accelerationRate;
         double _timeSinceAccelerationChange; // время, прошедшее с момента изменения ускорения
         double _timeToProceedWithAcceleration; // временной промежуток для следования с текущим ускорением
+};
+
+class Missile : public MovingObject // класс ракет
+{
+    public:
+        Missile(double initialSpeed, double initialX, double initialY);
+        void setTarget(Target* newTarget) { _acquiredTarget = newTarget; }
+        void basicMove(double elapsedTime);
+        void advancedMove(double elapsedTime);
+        void independentAdvancedMove();
+
+    private:
+        Target* _acquiredTarget;
+        PIDController* _guidanceComputer;
+        double _remainingFuelMass;
+        double _fuelConsumptionRate;
+        double _engineThrust;
+        double _calculateTotalMass() { return _remainingFuelMass + MISSILE_PAYLOAD_MASS; }
+        double _calculatePropulsionAccelerationRate() { return _remainingFuelMass > 0 ? _engineThrust / _calculateTotalMass() : 0; }
+        double _calculateDragDecelerationRate() { return 0; }; // TODO реализовать аэродинамику
+        double _calculateGuidanceBoundary();
 };
 
 MovementVector::MovementVector(double startX, double startY, double endX, double endY)
@@ -136,8 +150,10 @@ void MovementVector::normalize()
 MovingObject::MovingObject(double initialSpeed, double initialX, double initialY)
 {
     MovementVector* velocity = new MovementVector(initialX, initialY, initialX, initialY + 1); // создаём вектор скорости, сонаправленный с осью Y
+    
     _X = initialX;
     _Y = initialY;
+
     _actingVectors.insert({"velocity", velocity});
 }
 
@@ -157,25 +173,11 @@ void MovingObject::basicMove()
     _X += velocity->getEndX() * _speed;
     _Y += velocity->getEndY() * _speed;
     
-    // сдвигаем действующие векторы
-    translateActingVectors();
-
     // поворачиваем действующие векторы (в данном случае только вектор скорости) на угол 30 градусов
-    rotateActingVectors(convertDegreesToRadians(30));
+    _rotateActingVectors(convertDegreesToRadians(30));
 }
 
-void MovingObject::translateActingVectors()
-{
-    for (const auto& [key, vector] : _actingVectors)
-    {
-        vector->setStartX(_X); 
-        vector->setStartY(_Y);
-        vector->setEndX(vector->getEndX() + _X);
-        vector->setEndY(vector->getEndY() + _Y);
-    };
-}
-
-void MovingObject::rotateActingVectors(double angle)
+void MovingObject::_rotateActingVectors(double angle)
 {
     for (const auto& [key, vector] : _actingVectors)
     {
@@ -190,7 +192,7 @@ Target::Target(double initialSpeed, double initialX, double initialY)
     
     _timeSinceAccelerationChange = 0;
     _accelerationRate = 0;
-    _timeToProceedWithAcceleration = getRandomInRange(SIM_TIME_RESOLUTION_SECONDS, SIM_TIME_RESOLUTION_SECONDS * 200);
+    _timeToProceedWithAcceleration = getRandomInRange(SIM_TIME_RESOLUTION_SECONDS, SIM_TIME_RESOLUTION_SECONDS * 20);
 
     _actingVectors.insert({"acceleration", acceleration});
 }
@@ -220,8 +222,7 @@ void Target::basicMove(double elapsedTime)
     // находим угол между векторами скорости и изменения направления
     angle = atan2(determinant, scalarProduct);
 
-    rotateActingVectors(angle);
-    translateActingVectors();
+    _rotateActingVectors(angle);
     delete directionChange;
 }
 
@@ -242,7 +243,7 @@ void Target::independentAdvancedMove()
 {
     double simElapsedTime = 0;
     double timeSinceAccelerationChange = 0;
-    double timeToProceedWithAcceleration = getRandomInRange(SIM_TIME_RESOLUTION_SECONDS, SIM_TIME_RESOLUTION_SECONDS * 200);
+    double timeToProceedWithAcceleration = getRandomInRange(SIM_TIME_RESOLUTION_SECONDS, SIM_TIME_RESOLUTION_SECONDS * 20);
     string xCoordStr;
     string yCoordStr;
     string elapsedTimeStr;
@@ -250,12 +251,11 @@ void Target::independentAdvancedMove()
 
     while (i < 600)
     {
-        xCoordStr = to_string(_X);
-        yCoordStr = to_string(_Y);
-        elapsedTimeStr = to_string(simElapsedTime);
-        elapsedTimeStr.replace(elapsedTimeStr.find("."), 1, ",");
+        xCoordStr = convertDoubleToStringWithPrecision(_X);
+        yCoordStr = convertDoubleToStringWithPrecision(_Y);
+        elapsedTimeStr = convertDoubleToStringWithPrecision(simElapsedTime, true);
 
-        fileOutput.push_back(elapsedTimeStr + ";" + to_string(_X).replace(xCoordStr.find("."), 1, ",") + ";" + to_string(_Y).replace(yCoordStr.find("."), 1, ",") + "\n");
+        fileOutput.push_back(elapsedTimeStr + ";" + convertDoubleToStringWithPrecision(_X, true) + ";" + convertDoubleToStringWithPrecision(_Y, true) + "\n");
         stdOutput.push_back(xCoordStr + ", " + yCoordStr + "\n");
 
         basicMove(SIM_TIME_RESOLUTION_SECONDS);
@@ -271,29 +271,93 @@ void Target::independentAdvancedMove()
         i++;
     }
     
-    xCoordStr = to_string(_X);
-    yCoordStr = to_string(_Y);
-    elapsedTimeStr = to_string(simElapsedTime);
-    elapsedTimeStr.replace(elapsedTimeStr.find("."), 1, ",");
+    xCoordStr = convertDoubleToStringWithPrecision(_X);
+    yCoordStr = convertDoubleToStringWithPrecision(_Y);
+    elapsedTimeStr = convertDoubleToStringWithPrecision(simElapsedTime, true);
 
-    fileOutput.push_back(elapsedTimeStr + ";" + to_string(_X).replace(xCoordStr.find("."), 1, ",") + ";" + to_string(_Y).replace(yCoordStr.find("."), 1, ",") + "\n\n\n");
+    fileOutput.push_back(elapsedTimeStr + ";" + convertDoubleToStringWithPrecision(_X, true) + ";" + convertDoubleToStringWithPrecision(_Y, true) + "\n\n\n");
     stdOutput.push_back(xCoordStr + ", " + yCoordStr + "\n\n");
+}
+
+Missile::Missile(double initialSpeed, double initialX, double initialY)
+: MovingObject(initialSpeed, initialX, initialY)
+{
+    MovementVector* propulsionAcceleration = new MovementVector(initialX, initialY, initialX, initialY + 1);
+    MovementVector* dragDeceleration = new MovementVector(initialX, initialY, initialX, initialY - 1);
+    MovementVector* steeringAcceleration = new MovementVector(initialX, initialY, initialX + 1, initialY);
+
+    _acquiredTarget = NULL;
+    _guidanceComputer = new PIDController(SIM_TIME_RESOLUTION_SECONDS, 0, 0, 0.1, 0.5, 0.01);
+    _remainingFuelMass = MISSILE_FUEL_MASS;
+    _fuelConsumptionRate = MISSILE_FUEL_MASS / MISSILE_ENGINE_BURN_TIME;
+    _engineThrust = MISSILE_FUEL_ISP * _fuelConsumptionRate * GRAVITATIONAL_ACCELERATION;
+
+    _actingVectors.insert({"propAccel", propulsionAcceleration});
+    _actingVectors.insert({"dragDecel", dragDeceleration});
+    _actingVectors.insert({"steering", steeringAcceleration});
+}
+
+void Missile::basicMove(double elapsedTime)
+{
+    MovementVector* velocity = _actingVectors.at("velocity");
+    MovementVector* acceleration = _actingVectors.at("propAccel");
+    double speedPositionDelta = elapsedTime * _speed; // вычисляем изменение координат из-за скорости
+    double accelerationPositionDelta = pow(elapsedTime, 2) * _calculatePropulsionAccelerationRate(); // вычисляем изменение координат из-за ускорения
+    double accelerationSpeedDelta = elapsedTime * _calculatePropulsionAccelerationRate();
+
+    // изменяем положение объекта
+    _X += velocity->getXCoordinate() * speedPositionDelta + acceleration->getXCoordinate() * accelerationPositionDelta; 
+    _Y += velocity->getYCoordinate() * speedPositionDelta + acceleration->getYCoordinate() * accelerationPositionDelta;
+    _speed += accelerationSpeedDelta;
+
+    // потребляем топливо
+    if (_remainingFuelMass > 0) _remainingFuelMass -= _fuelConsumptionRate * elapsedTime;
+}
+
+void Missile::independentAdvancedMove()
+{
+    double simElapsedTime = 0;
+    string xCoordStr;
+    string yCoordStr;
+    string elapsedTimeStr;
+    int i = 0;
+
+    while (i < 600)
+    {
+        xCoordStr = convertDoubleToStringWithPrecision(_X);
+        yCoordStr = convertDoubleToStringWithPrecision(_Y);
+        elapsedTimeStr = convertDoubleToStringWithPrecision(simElapsedTime, true);
+
+        fileOutput.push_back(elapsedTimeStr + ";" + convertDoubleToStringWithPrecision(_X, true) + ";" + convertDoubleToStringWithPrecision(_Y, true) + "\n");
+        stdOutput.push_back(xCoordStr + ", " + yCoordStr + "\n");
+
+        basicMove(SIM_TIME_RESOLUTION_SECONDS);
+
+        simElapsedTime += SIM_TIME_RESOLUTION_SECONDS;
+
+        i++;
+    }
+
+    cout << "Final Speed: " << _speed << "\n";
+
+    xCoordStr = convertDoubleToStringWithPrecision(_X);
+    yCoordStr = convertDoubleToStringWithPrecision(_Y);
+    elapsedTimeStr = convertDoubleToStringWithPrecision(simElapsedTime, true);
+
+    fileOutput.push_back(elapsedTimeStr + ";" + convertDoubleToStringWithPrecision(_X, true) + ";" + convertDoubleToStringWithPrecision(_Y, true) + "\n");
+    stdOutput.push_back(xCoordStr + ", " + yCoordStr + "\n");
 }
 
 int main(int argc, char const* argv[])
 {
-    Target flyer(0.0, 0.0, 0.0);
+    Missile flyer(0.0, 0.0, 0.0);
     ofstream outputFile;
     
     int fileOutputNeeded = findArgumentInList(argc, argv, OUTPUT_TO_FILE_KEY);
     int speedIndex = findArgumentInList(argc, argv, SPEED_KEY);
-    int accelIndex = findArgumentInList(argc, argv, ACCELERATION_KEY);
     
     if (speedIndex != -1) flyer.setSpeed(stod(argv[speedIndex + 1]));
     else flyer.setSpeed(getRandomInRange(100, 500));
-
-    if (accelIndex != -1) flyer.setAccelerationRate(stod(argv[accelIndex + 1]) * GRAVITATIONAL_ACCELERATION);
-    else flyer.setAccelerationRate(getRandomInRange(-9, 9));
 
     if (fileOutputNeeded != -1) 
     {

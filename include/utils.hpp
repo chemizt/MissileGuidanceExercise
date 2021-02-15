@@ -13,10 +13,17 @@
 #define OUTPUT_COORDS_ONLY_KEY "-co"
 #pragma endregion
 
+#define STANDARD_PRECISION 5
+
 using namespace std::chrono;
 using std::mt19937_64;
 using std::random_device;
 using std::uniform_real_distribution;
+using std::string;
+using std::stringstream;
+using std::fixed;
+using std::setprecision;
+using std::locale;
 
 struct Comma final : std::numpunct<char> // inspired by (copy-typed from) https://stackoverflow.com/a/42331536
 {
@@ -56,6 +63,17 @@ double convertDegreesToRadians(double degrees)
 double convertRadiansToDegrees(double radians)
 {
     return radians * 180.0 / M_PI;
+}
+
+string convertDoubleToStringWithPrecision(double dbl, bool changeDecimal = false)
+{
+    stringstream s;
+
+    if (changeDecimal) s.imbue(locale(locale::classic(), new Comma));
+    s << fixed << setprecision(STANDARD_PRECISION);
+    s << dbl;
+
+    return s.str();
 }
 
 #endif
