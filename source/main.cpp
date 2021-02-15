@@ -99,10 +99,13 @@ class Target : public MovingObject // класс целей - дополните
         double getAccelerationRate() { return _accelerationRate; }
         void setAccelerationRate(double newAccelerationRate) { _accelerationRate = newAccelerationRate; }
         void basicMove(double elapsedTime);
-        void advancedMove();
+        void advancedMove(double elapsedTime);
+        void independentAdvancedMove();
 
     private:
         double _accelerationRate;
+        double _timeSinceAccelerationChange; // время, прошедшее с момента изменения ускорения
+        double _timeToProceedWithAcceleration; // временной промежуток для следования с текущим ускорением
 };
 
 MovementVector::MovementVector(double startX, double startY, double endX, double endY)
@@ -184,7 +187,11 @@ Target::Target(double initialSpeed, double initialX, double initialY)
 : MovingObject(initialSpeed, initialX, initialY)
 {
     MovementVector* acceleration = new MovementVector(initialX, initialY, initialX + 1, initialY); // создаём вектор поперечного ускорения
+    
+    _timeSinceAccelerationChange = 0;
     _accelerationRate = 0;
+    _timeToProceedWithAcceleration = getRandomInRange(SIM_TIME_RESOLUTION_SECONDS, SIM_TIME_RESOLUTION_SECONDS * 200);
+
     _actingVectors.insert({"acceleration", acceleration});
 }
 
@@ -218,7 +225,20 @@ void Target::basicMove(double elapsedTime)
     delete directionChange;
 }
 
-void Target::advancedMove()
+void Target::advancedMove(double elapsedTime)
+{
+    basicMove(elapsedTime);
+
+    _timeSinceAccelerationChange += elapsedTime;
+
+    if (_timeSinceAccelerationChange >= _timeToProceedWithAcceleration)
+    {
+        _timeSinceAccelerationChange = 0;
+        setAccelerationRate(getRandomInRange(-9, 9));
+    }
+}
+
+void Target::independentAdvancedMove()
 {
     double simElapsedTime = 0;
     double timeSinceAccelerationChange = 0;
@@ -287,7 +307,7 @@ int main(int argc, char const* argv[])
     fileOutput.clear();
     stdOutput.clear();
 
-    flyer.advancedMove();
+    flyer.independentAdvancedMove();
         
     for (string str : stdOutput)
     {
