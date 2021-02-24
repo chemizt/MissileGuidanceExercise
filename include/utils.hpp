@@ -44,17 +44,17 @@ struct Comma final : std::numpunct<char> // inspired by (copy-typed from) https:
     char do_decimal_point() const override { return ','; }
 };
 
-double getRandomInRange(double minValue, double maxValue);
-
-int findArgumentInList(unsigned int argc, char const* argv[], std::string arg);
-
 double convertDegreesToRadians(double degrees);
 
 double convertRadiansToDegrees(double radians);
 
 double getAngleBetweenVectors(QVector2D firstVector, QVector2D secondVector);
 
+double getRandomInRange(double minValue, double maxValue);
+
 double interpolateWithLinearInterpolation(double currX, double prevX, double prevY, double nextX, double nextY);
+
+int findArgumentInList(unsigned int argc, char const* argv[], std::string arg);
 
 string convertDoubleToStringWithPrecision(double dbl, int precision = STANDARD_PRECISION, bool changeDecimal = true);
 

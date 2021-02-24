@@ -18,7 +18,6 @@ class MainWindow : public QMainWindow
         MainWindow(QWidget *parent = nullptr);
         ~MainWindow();
 
-
     private slots:
         void on_startSimBtn_clicked();
         void on_resetSimBtn_clicked();

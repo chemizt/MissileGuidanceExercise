@@ -4,8 +4,8 @@ QMap<QString, double> dragCoefficients {{"0.5", 0.012}, {"0.9", 0.015}, {"1.2", 
 
 MovingObject::MovingObject(double initialSpeed, double initialX, double initialY)
 {
-    QVector2D* velocity = new QVector2D(0, 1); // создаём вектор скорости, сонаправленный с осью Y
     _coordinates = new QPointF(initialX, initialY);
+    QVector2D* velocity = new QVector2D(0, 1); // создаём вектор скорости, сонаправленный с осью Y
 
     _speed = initialSpeed;
 
@@ -24,6 +24,7 @@ void MovingObject::_rotateActingVectors(double angle)
     {
         QTransform transform = QTransform().rotate(angle);
         QPointF rotatedPoint = transform.map(value->toPointF());
+        
         value->setX(rotatedPoint.x());
         value->setY(rotatedPoint.y());
     }
@@ -43,12 +44,12 @@ Target::Target(double initialSpeed, double initialX, double initialY) : MovingOb
 
 void Target::basicMove(double elapsedTime)
 {
-    QVector2D* velocity = _actingVectors.value("velocity");
-    QVector2D* acceleration = _actingVectors.value("acceleration");
-    QVector2D* directionChange = new QVector2D(_coordinates->x(), _coordinates->y());
-    double speedPositionDelta = elapsedTime * _speed; // вычисляем изменение координат из-за скорости
     double accelerationPositionDelta = pow(elapsedTime, 2) * _accelerationRate * GRAVITATIONAL_ACCELERATION; // вычисляем изменение координат из-за ускорения
     double angle;
+    double speedPositionDelta = elapsedTime * _speed; // вычисляем изменение координат из-за скорости
+    QVector2D* acceleration = _actingVectors.value("acceleration");
+    QVector2D* directionChange = new QVector2D(_coordinates->x(), _coordinates->y());
+    QVector2D* velocity = _actingVectors.value("velocity");
 
     // изменяем координаты
     _coordinates->setX(_coordinates->x() + velocity->x() * speedPositionDelta + acceleration->x() * accelerationPositionDelta);
@@ -75,33 +76,26 @@ void Target::advancedMove(double elapsedTime)
     if (_timeSinceAccelerationChange >= _timeToProceedWithAcceleration)
     {
         _timeSinceAccelerationChange = 0;
-        setAccelerationRate(getRandomInRange(-9, 9));
-        _timeToProceedWithAcceleration = getRandomInRange(SIM_TIME_RESOLUTION_SECONDS * 10, MAX_TIME_TO_PROCEED_WITH_ACCELERATION);
+        setAccelerationRate(getRandomInRange(-9, 9)); // меняем ускорение
+        _timeToProceedWithAcceleration = getRandomInRange(SIM_TIME_RESOLUTION_SECONDS * 10, MAX_TIME_TO_PROCEED_WITH_ACCELERATION); // задаём случайное время следования с новым ускорением
     }
 }
 
 Missile::Missile(double initialSpeed, double initialX, double initialY) : MovingObject(initialSpeed, initialX, initialY)
 {
-    QVector2D* propulsionAcceleration = new QVector2D(initialX, initialY + 1);
-    QVector2D* dragDeceleration = new QVector2D(initialX, initialY - 1);
-    QVector2D* steeringAcceleration = new QVector2D(initialX + 1, initialY);
-
     _acquiredTarget = NULL;
     _guidanceComputer = new PIDController(SIM_TIME_RESOLUTION_SECONDS, -5, 5, 0.001, 0.007, 0.003);
     _remainingFuelMass = MISSILE_FUEL_MASS;
     _fuelConsumptionRate = MISSILE_FUEL_MASS / MISSILE_ENGINE_BURN_TIME;
     _engineThrust = MISSILE_FUEL_ISP * _fuelConsumptionRate * GRAVITATIONAL_ACCELERATION;
-
-    _actingVectors.insert("propAccel", propulsionAcceleration);
-    _actingVectors.insert("dragDecel", dragDeceleration);
-    _actingVectors.insert("steering", steeringAcceleration);
 }
 
 void Missile::basicMove(double elapsedTime, double angleOfAttack)
 {
     // изменяем скорость за счёт тяги двигателя и сопротивления воздуха
     _speed += elapsedTime * (_calculatePropulsionAccelerationRate() - _calculateDragDecelerationRate(angleOfAttack));
-    double speedPositionDelta = elapsedTime * _speed; // вычисляем изменение координат из-за скорости
+    // вычисляем изменение координат из-за скорости
+    double speedPositionDelta = elapsedTime * _speed; 
 
     QVector2D* velocity = _actingVectors.value("velocity");
 
@@ -116,13 +110,13 @@ void Missile::basicMove(double elapsedTime, double angleOfAttack)
 void Missile::advancedMove(double elapsedTime)
 {
     QVector2D* velocity = _actingVectors.value("velocity");
-    QVector2D lead = _calculateLead();
+    QVector2D lead = _calculateLead(); // вычисляем вектор упреждения
     double steeringAngle;
     double angleDiff;
 
-    _setGuidanceBoundary();
-    angleDiff = getAngleBetweenVectors(*velocity, lead);
-    steeringAngle = _guidanceComputer->calculate(abs(angleDiff) < 60 ? angleDiff : 0, 0);
+    _setGuidanceBoundary(); // определяем пределы наведения
+    angleDiff = getAngleBetweenVectors(*velocity, lead); // находим угол между векторами скорости и упреждения
+    steeringAngle = _guidanceComputer->calculate(abs(angleDiff) < 60 ? angleDiff : 0, 0); // если угол > 60 гр., ракета "теряет" цель
 
     basicMove(elapsedTime, steeringAngle);
 
@@ -132,9 +126,9 @@ void Missile::advancedMove(double elapsedTime)
 double Missile::_calculateDragDecelerationRate(double angleOfAttack)
 {
     double zeroLiftDragCoefficient;
-    double liftInducedDragCoefficient = _calculateLiftInducedDragCoefficient(angleOfAttack);
-    double machNumber = _calculateMachNumber();
-    double aerodynamicParameter = _calculateAerodynamicParameter();
+    double liftInducedDragCoefficient = _calculateLiftInducedDragCoefficient(angleOfAttack); // вычисляем КИС
+    double machNumber = _calculateMachNumber(); // вычисляем число Маха
+    double aerodynamicParameter = _calculateAerodynamicParameter(); // вычисляем "аэродинамический параметр"
     double fullDragForce = 0;
     QString machNumberStr = QString::fromStdString(convertDoubleToStringWithPrecision(machNumber, 1, false));
 
@@ -147,15 +141,15 @@ double Missile::_calculateDragDecelerationRate(double angleOfAttack)
         zeroLiftDragCoefficient = _interpolateZeroLiftDragCoefficient(machNumber);
     }
 
-    fullDragForce = aerodynamicParameter * (zeroLiftDragCoefficient + liftInducedDragCoefficient);
+    fullDragForce = aerodynamicParameter * (zeroLiftDragCoefficient + liftInducedDragCoefficient); // вычисляем полную силу сопротивления воздуха
 
-    return fullDragForce / _calculateTotalMass();
+    return fullDragForce / _calculateTotalMass(); // вычисляем "торможение", вызванное силой сопротивления воздуха
 }
 
 void Missile::_setGuidanceBoundary()
 {
     double zeroLiftDragCoefficient;
-    double machNumber = _calculateMachNumber();
+    double machNumber = _calculateMachNumber(); // вычисляем число Маха
     double maxDecelForce = _calculateTotalMass() * MISSILE_G_TOLERANCE * GRAVITATIONAL_ACCELERATION; // вычисляем максимальную силу "торможения"
     double inducedDragCoeffAtMaxDecel;
     double maxAoA;
@@ -170,8 +164,9 @@ void Missile::_setGuidanceBoundary()
         zeroLiftDragCoefficient = _interpolateZeroLiftDragCoefficient(machNumber);
     }
 
-    inducedDragCoeffAtMaxDecel = maxDecelForce / _calculateAerodynamicParameter() - zeroLiftDragCoefficient;
+    inducedDragCoeffAtMaxDecel = maxDecelForce / _calculateAerodynamicParameter() - zeroLiftDragCoefficient; // вычисляем КИС при максимальной перегрузке
 
+     // вычисляем угол атаки при максимальной перегрузке и задаём в соответствии с ним пределы наведения
     maxAoA = _calculateAngleOfAttack(inducedDragCoeffAtMaxDecel);
     _guidanceComputer->setMinBoundary(-maxAoA);
     _guidanceComputer->setMaxBoundary(maxAoA);
@@ -227,6 +222,7 @@ double Missile::_calculateAngleOfAttack(double inducedDragCoeff)
 
 double Missile::_calculateAerodynamicParameter()
 {
+    // 0.5 * rho * v ^ 2 * S
     return (AIR_DENSITY * pow(_speed, 2) * PLANFORM_AREA) / 2;
 }
 
@@ -234,8 +230,8 @@ QVector2D Missile::_calculateLead()
 {
     double tgtSpeed = _acquiredTarget->getSpeed();
     QVector2D* targetVelocity = _acquiredTarget->getVelocity();
-    QPointF predictedTargetLocation(_acquiredTarget->getX() + targetVelocity->x() * tgtSpeed, _acquiredTarget->getY() + targetVelocity->y() * tgtSpeed);
-    QVector2D interceptVector(predictedTargetLocation.x() - _coordinates->x(), predictedTargetLocation.y() - _coordinates->y());
+    QPointF predictedTargetLocation(_acquiredTarget->getX() + targetVelocity->x() * tgtSpeed, _acquiredTarget->getY() + targetVelocity->y() * tgtSpeed); // "предсказываем" положение цели
+    QVector2D interceptVector(predictedTargetLocation.x() - _coordinates->x(), predictedTargetLocation.y() - _coordinates->y()); // строим вектор, указывающий на предсказанное положение цели
 
     return interceptVector.normalized();
 }

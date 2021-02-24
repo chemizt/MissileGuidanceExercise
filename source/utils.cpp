@@ -39,6 +39,7 @@ double getAngleBetweenVectors(QVector2D firstVector, QVector2D secondVector)
 {
     double angle = atan2(secondVector.y(), secondVector.x()) - atan2(firstVector.y(), firstVector.x());
 
+    // нормализуем угол в диапазон -pi..pi
     if (angle > M_PI) angle -= 2 * M_PI;
     else if (angle <= -M_PI) angle += 2 * M_PI;
 
