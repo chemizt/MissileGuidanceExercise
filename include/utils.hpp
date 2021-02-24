@@ -1,10 +1,18 @@
 #ifndef UTILS_HDR_IG
 #define UTILS_HDR_IG
 
+#define _USE_MATH_DEFINES
+
+#include <cmath>
 #include <random>
 #include <string>
+#include <sstream>
 #include <locale>
 #include <chrono>
+#include <iomanip>
+#include <fstream>
+#include <charconv>
+#include <QVector2D>
 
 #pragma region ARGUMENT_KEYS
 #define SPEED_KEY "-s"
@@ -24,56 +32,30 @@ using std::stringstream;
 using std::fixed;
 using std::setprecision;
 using std::locale;
+using std::map;
+using std::ofstream;
+using std::stod;
+using std::ios_base;
+using std::vector;
+using std::to_string;
 
 struct Comma final : std::numpunct<char> // inspired by (copy-typed from) https://stackoverflow.com/a/42331536
 {
     char do_decimal_point() const override { return ','; }
 };
 
-double getRandomInRange(double minValue, double maxValue)
-{
-    random_device rD;
-    mt19937_64::result_type seed = rD() ^ 
-    ((mt19937_64::result_type) duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count() + 
-    (mt19937_64::result_type) duration_cast<microseconds>(high_resolution_clock::now().time_since_epoch()).count());
+double getRandomInRange(double minValue, double maxValue);
 
-    mt19937_64 rNG(seed);
-    uniform_real_distribution<double> distribution(minValue, maxValue);
+int findArgumentInList(unsigned int argc, char const* argv[], std::string arg);
 
-    return distribution(rNG);
-}
+double convertDegreesToRadians(double degrees);
 
-int findArgumentInList(unsigned int argc, char const* argv[], std::string arg)
-{
-    int result = -1;
-    
-    for (unsigned int i = 0; (i < argc) && (result == -1); i++)
-    {
-        if (argv[i] == arg) result = i;
-    }
+double convertRadiansToDegrees(double radians);
 
-    return result;
-}
+double getAngleBetweenVectors(QVector2D firstVector, QVector2D secondVector);
 
-double convertDegreesToRadians(double degrees)
-{
-    return degrees * M_PI / 180.0;
-}
+double interpolateWithLinearInterpolation(double currX, double prevX, double prevY, double nextX, double nextY);
 
-double convertRadiansToDegrees(double radians)
-{
-    return radians * 180.0 / M_PI;
-}
-
-string convertDoubleToStringWithPrecision(double dbl, bool changeDecimal = false)
-{
-    stringstream s;
-
-    if (changeDecimal) s.imbue(locale(locale::classic(), new Comma));
-    s << fixed << setprecision(STANDARD_PRECISION);
-    s << dbl;
-
-    return s.str();
-}
+string convertDoubleToStringWithPrecision(double dbl, int precision = STANDARD_PRECISION, bool changeDecimal = true);
 
 #endif

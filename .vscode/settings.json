@@ -48,5 +48,10 @@
         "numeric": "cpp",
         "random": "cpp",
         "ratio": "cpp"
-    }
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+    "cmake.cpptools.intelliSenseMode": "gcc-x64",
+    "cmake.cpptools.compilerPath": "gcc",
+    "cmake.default.generator": "Unix Makefiles",
+    "cmake.reconfigureOnChange": true
 }

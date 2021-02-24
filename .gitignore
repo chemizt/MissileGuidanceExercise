@@ -36,3 +36,6 @@
 
 #Compiler Outputs
 **/out/**
+
+#Log Files
+**/*.log
