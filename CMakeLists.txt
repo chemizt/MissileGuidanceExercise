@@ -10,17 +10,13 @@ set(UI ${CMAKE_SOURCE_DIR}/qml/mainwindow.ui)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/out/bin/debug)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_SOURCE_DIR}/out/bin/release)
-
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools PrintSupport REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools PrintSupport REQUIRED)
 
 set(TS_FILES locale/MissileGuidanceExercise_ru_RU.ts)
 
-file(GLOB SOURCE_FILES source/**)
-
-file(GLOB HEADER_FILES include/**)
+file(GLOB_RECURSE SOURCE_FILES source/**)
+file(GLOB_RECURSE HEADER_FILES include/**)
 
 set(PROJECT_SOURCES ${SOURCE_FILES} ${HEADER_FILES} ${TS_FILES})
 

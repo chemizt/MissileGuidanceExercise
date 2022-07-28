@@ -12,6 +12,8 @@
 #include <iomanip>
 #include <fstream>
 #include <charconv>
+#include <QMap>
+#include <QString>
 #include <QVector2D>
 
 #pragma region ARGUMENT_KEYS
@@ -41,16 +43,14 @@ using std::to_string;
 
 struct Comma final : std::numpunct<char> // inspired by (copy-typed from) https://stackoverflow.com/a/42331536
 {
-    char do_decimal_point() const override { return ','; }
+	char do_decimal_point() const override { return ','; }
 };
 
 double convertDegreesToRadians(double degrees);
 
 double convertRadiansToDegrees(double radians);
 
-double getAngleBetweenVectors(QVector2D firstVector, QVector2D secondVector);
-
-double getRandomInRange(double minValue, double maxValue);
+double getAngleBetweenVectors(const QVector2D& firstVector, const QVector2D& secondVector);
 
 double interpolateWithLinearInterpolation(double currX, double prevX, double prevY, double nextX, double nextY);
 
