@@ -11,9 +11,11 @@ class Missile : public MovingObject // класс ракет
 		Missile(double initialSpeed, double initialX, double initialY);
 		double getRemainingFuelMass();
 		double getProxyRadius();
+		MovingObject* getTarget();
 		void advancedMove(double elapsedTime);
 		void basicMove(double elapsedTime, double angleOfAttack);
 		void setTarget(MovingObject* newTarget);
+		void setNavConstant(double mslNavConstant);
 
 	private:
 		double _engineThrust;

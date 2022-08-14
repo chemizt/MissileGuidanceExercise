@@ -18,6 +18,7 @@ class MainWindow : public QMainWindow
 		MainWindow(QWidget *parent = nullptr);
 		~MainWindow();
 
+		void runSim(Simulation& sim);
 	private slots:
 		void on_startSimBtn_clicked();
 		void on_resetSimBtn_clicked();
@@ -25,8 +26,8 @@ class MainWindow : public QMainWindow
 private:
 		Ui::MainWindow *ui;
 		QVector<double> mslX, mslY, tgtX, tgtY;
-		void plot();
-		void runSim(Simulation& sim);
+		bool simFinished{false};
+		void plot(bool doFilter = false);
 
 };
 #endif // MAINWINDOW_H

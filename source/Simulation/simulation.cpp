@@ -28,23 +28,16 @@ Simulation::~Simulation()
 
 void Simulation::iterate()
 {
-	string tgtXCoord;
-	string tgtYCoord;
-	string tgtSpeed;
-	string mslXCoord;
-	string mslYCoord;
-	string mslSpeed;
-	string elapsedTimeStr;
-
-	tgtXCoord = convertDoubleToStringWithPrecision(_target->getX());
-	tgtYCoord = convertDoubleToStringWithPrecision(_target->getY());
-	tgtSpeed = convertDoubleToStringWithPrecision(_target->getSpeed());
-	mslXCoord = convertDoubleToStringWithPrecision(_missile->getX());
-	mslYCoord = convertDoubleToStringWithPrecision(_missile->getY());
-	mslSpeed = convertDoubleToStringWithPrecision(_missile->getSpeed());
-	elapsedTimeStr = convertDoubleToStringWithPrecision(_simElapsedTime);
-
-	if (_fileOutputNeeded) _outputFile << elapsedTimeStr + ";" + tgtXCoord + ";" + tgtYCoord + ";" + tgtSpeed + ";" + mslXCoord + ";" + mslYCoord + ";" + mslSpeed + ";\n";
+	if (_fileOutputNeeded)
+	{
+		_outputFile << convertDoubleToStringWithPrecision(_target->getX()) + ";"
+			+ convertDoubleToStringWithPrecision(_target->getY()) + ";"
+			+ convertDoubleToStringWithPrecision(_target->getSpeed()) + ";"
+			+ convertDoubleToStringWithPrecision(_missile->getX()) + ";"
+			+ convertDoubleToStringWithPrecision(_missile->getY()) + ";"
+			+ convertDoubleToStringWithPrecision(_missile->getSpeed()) + ";"
+			+ convertDoubleToStringWithPrecision(_simElapsedTime) + ";\n";
+	}
 
 	_target->advancedMove(SIM_RESOLUTION);
 	_missile->advancedMove(SIM_RESOLUTION);
@@ -54,7 +47,7 @@ void Simulation::iterate()
 
 bool Simulation::mslSpeedMoreThanTgtSpeed()
 {
-	return _missile->getRemainingFuelMass() > 0 ? true : _missile->getSpeed() > _target->getSpeed();
+	return _missile->getRemainingFuelMass() > 0 ? true : _missile->getSpeed() > _target->getSpeed() && _missile->getTarget();
 }
 
 bool Simulation::mslWithinTgtHitRadius()
@@ -64,5 +57,5 @@ bool Simulation::mslWithinTgtHitRadius()
 
 double Simulation::_getMslTgtDistance()
 {
-	return sqrt(pow(_missile->getX() - _target->getX(), 2) + pow(_missile->getY() - _target->getY(), 2));
+	return (_target->getCoordinates() - _missile->getCoordinates()).length();
 }

@@ -50,11 +50,9 @@ double convertDegreesToRadians(double degrees);
 
 double convertRadiansToDegrees(double radians);
 
-double getAngleBetweenVectors(const QVector2D& firstVector, const QVector2D& secondVector);
+double getAngleBetweenVectorsRad(const QVector2D& firstVector, const QVector2D& secondVector);
 
-double interpolateWithLinearInterpolation(double currX, double prevX, double prevY, double nextX, double nextY);
-
-int findArgumentInList(unsigned int argc, char const* argv[], std::string arg);
+double lerp(double currX, double prevX, double prevY, double nextX, double nextY);
 
 string convertDoubleToStringWithPrecision(double dbl, int precision = STANDARD_PRECISION, bool changeDecimal = true);
 

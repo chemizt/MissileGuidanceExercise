@@ -13,7 +13,6 @@ class Target : public MovingObject // класс целей - дополните
 		void setAccelerationRate(double newAccelerationRate);
 
 	private:
-		double _accelerationRate;
 		double _timeSinceAccelerationChange;	// время, прошедшее с момента изменения ускорения
 		double _timeToProceedWithAcceleration;	// временной промежуток для следования с текущим ускорением
 };

@@ -12,19 +12,19 @@ class MovingObject // базовый класс движущихся объек�
 	public:
 		MovingObject() = delete;
 		MovingObject(double initialSpeed, double initialX, double initialY);
-		double getSpeed() { return _velocity.length(); }
+		double getSpeed() { return _actingVectors.at("velocity").length(); }
 		double getX() { return _coordinates.x(); }
 		double getY() { return _coordinates.y(); }
 		QVector2D getCoordinates() { return _coordinates; }
-		QVector2D getVelocity() { return _velocity; }
+		QVector2D getVelocity() { return _actingVectors.at("velocity"); }
 
 	protected:
-		QMap<QString, QVector2D> _actingVectors;
+		std::unordered_map<QString, QVector2D> _actingVectors;
 		QVector2D _coordinates;
-		QVector2D _velocity;
 		std::mt19937_64 _leMersenneTwister;
+		double timeSinceBirth{0};
 		double _getRandomInRange(double minValue, double maxValue);
-		void _rotateActingVectors(double angle); // поворачивает действующие на объект векторы в соответствии с углом, на который поворачивает объект
+		void _rotateActingVectorsRad(double angle); // поворачивает действующие на объект векторы в соответствии с углом, на который поворачивает объект
 };
 
 #endif // MOVOBJ_HDR_IG

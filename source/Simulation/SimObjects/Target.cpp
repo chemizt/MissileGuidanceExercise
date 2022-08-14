@@ -4,38 +4,40 @@
 
 namespace TargetParameters
 {
-	double maxEvasiveManeuverTime = 5;			// максимальное время следования с ускорением для цели
+	double maxEvasiveManeuverTime = 30;			// максимальное время следования с ускорением для цели
 	double maxNormalAcceleration = 9;			// верхний порог ускорения цели
 	double minNormalAcceleration = -9;			// нижний порог ускорения цели
 };
 
 Target::Target(double initialSpeed, double initialX, double initialY) : MovingObject(-initialSpeed, initialX, initialY)
 {
-	QVector2D acceleration = QVector2D(1, 0); // создаём вектор поперечного ускорения
+	_actingVectors.try_emplace("acceleration", QVector2D(1, 0)); // создаём вектор ускорения
 
 	_timeSinceAccelerationChange = 0;
-	_accelerationRate = 0;
-	_timeToProceedWithAcceleration = _getRandomInRange(SIM_RESOLUTION, TargetParameters::maxEvasiveManeuverTime);
-
-	_actingVectors.insert("acceleration", acceleration);
+	_timeToProceedWithAcceleration = _getRandomInRange(TargetParameters::maxEvasiveManeuverTime * 0.5, TargetParameters::maxEvasiveManeuverTime);
 }
 
 double Target::getAccelerationRate()
 {
-	return _accelerationRate;
+	return _actingVectors.at("acceleration").length();
 }
 
 void Target::basicMove(double elapsedTime)
 {
-	QVector2D acceleration = _actingVectors.value("acceleration") * pow(elapsedTime, 2) * _accelerationRate * FREEFALL_ACC;
-	QVector2D velocity = _actingVectors.value("velocity") * elapsedTime;
+	QVector2D positionDelta = _actingVectors.at("velocity") * elapsedTime;
 
-	_coordinates += velocity + acceleration;
+	if (_actingVectors.at("acceleration").length())
+		 positionDelta += _actingVectors.at("acceleration") * pow(elapsedTime, 2) * FREEFALL_ACC * 0.5;
+
+	_rotateActingVectorsRad(getAngleBetweenVectorsRad(positionDelta.normalized(), _actingVectors.at("velocity").normalized()));
+
+	_coordinates += positionDelta;
+	timeSinceBirth += SIM_RESOLUTION;
 }
 
 void Target::setAccelerationRate(double newAccelerationRate)
 {
-	_accelerationRate = newAccelerationRate;
+	_actingVectors.at("acceleration").setX(newAccelerationRate);
 }
 
 void Target::advancedMove(double elapsedTime)
@@ -47,7 +49,7 @@ void Target::advancedMove(double elapsedTime)
 	if (_timeSinceAccelerationChange >= _timeToProceedWithAcceleration)
 	{
 		_timeSinceAccelerationChange = 0;
-		setAccelerationRate(_getRandomInRange(-9, 9)); // меняем ускорение
-		_timeToProceedWithAcceleration = _getRandomInRange(SIM_RESOLUTION * 10, TargetParameters::maxEvasiveManeuverTime); // задаём случайное время следования с новым ускорением
+		setAccelerationRate(_getRandomInRange(TargetParameters::minNormalAcceleration, TargetParameters::maxNormalAcceleration)); // меняем ускорение
+		_timeToProceedWithAcceleration = _getRandomInRange(TargetParameters::maxEvasiveManeuverTime * 0.5, TargetParameters::maxEvasiveManeuverTime); // задаём случайное время следования с новым ускорением
 	}
 }

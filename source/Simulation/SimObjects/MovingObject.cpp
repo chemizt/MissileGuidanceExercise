@@ -9,9 +9,8 @@ using std::uniform_real_distribution;
 MovingObject::MovingObject(double initialSpeed, double initialX, double initialY)
 {
 	_coordinates = QVector2D(initialX, initialY);
-	_velocity = QVector2D(0, initialSpeed); // создаём вектор скорости, сонаправленный с осью Y
 
-	_actingVectors.insert("velocity", _velocity);
+	_actingVectors.try_emplace("velocity", QVector2D(0, initialSpeed));
 
 	random_device rD;
 	mt19937_64::result_type seed = rD() ^
@@ -28,14 +27,15 @@ double MovingObject::_getRandomInRange(double minValue, double maxValue)
 	return distribution(_leMersenneTwister);
 }
 
-void MovingObject::_rotateActingVectors(double angle)
+void MovingObject::_rotateActingVectorsRad(double angle)
 {
-	foreach(QVector2D value, _actingVectors)
+	QTransform transform = QTransform().rotateRadians(angle);
+
+	for (auto& [key, entry] : _actingVectors)
 	{
-		QTransform transform = QTransform().rotate(angle);
-		QPointF rotatedPoint = transform.map(value.toPointF());
-		
-		value.setX(rotatedPoint.x());
-		value.setY(rotatedPoint.y());
+		QPointF rotatedPoint = transform.map(entry.toPointF());
+
+		entry.setX(rotatedPoint.x());
+		entry.setY(rotatedPoint.y());
 	}
 }
