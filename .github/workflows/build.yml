@@ -4,3 +4,10 @@ on:
   push:
     branches:
       - master
+      
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Say that all's fine
+      run: echo "all is fine!"
