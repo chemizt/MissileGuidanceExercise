@@ -43,3 +43,19 @@ jobs:
 
     - name: Build the project
       run: cmake --build ./build
+      
+    - name: Deploy the program
+      run: |
+        mkdir build/all
+        cp build/MissileGuidanceExercise build/all
+        cd build/all
+        windeployqt MissileGuidanceExercise --release
+        ls
+        Compress-Archive -Path build/all -DestinationPath build/artifacts.zip
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Windows-targeted executable package
+        path: build/artifacts.zip
+      
