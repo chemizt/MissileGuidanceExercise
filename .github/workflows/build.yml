@@ -30,3 +30,16 @@ jobs:
         arch: ${{ env.MINGW_VERSION }}
         dir: "${{github.workspace}}/qt"
         cache: true
+        
+    - name: Set Qt path and refresh the environment
+      run: |
+        echo "${{github.workspace}}/qt/Qt/${{ env.QT_VERSION }}/${{ env.MINGW_PATH }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        refreshenv
+        
+    - name: Configure the CMake project
+      env:
+        CMAKE_PREFIX_PATH: ${{env.Qt5_Dir}}
+      run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "CodeBlocks - MinGW Makefiles" -B ${{github.workspace}}/build
+
+    - name: Build the project
+      run: cmake --build ./build
