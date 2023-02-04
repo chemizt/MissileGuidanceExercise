@@ -1,13 +1,32 @@
-name: GenericBuild
+name: BuildAndDeploy
 
 on:
   push:
-    branches:
-      - master
       
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
+    env:
+      QT_VERSION:     "5.15.2"
+      MINGW_VERSION:  "win64_mingw81"
+      MINGW_PATH:     "mingw81_64"
+      BUILD_TYPE:     MinSizeRel
+    
     steps:
-    - name: Say that all's fine
-      run: echo "all is fine!"
+    
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Install MinGW
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        version: 8.1.0
+        
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3.0.0
+      with:
+        host: windows
+        version: ${{ env.QT_VERSION }}
+        arch: ${{ env.MINGW_VERSION }}
+        dir: "${{github.workspace}}/qt"
+        cache: true
