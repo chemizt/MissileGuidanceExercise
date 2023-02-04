@@ -47,6 +47,7 @@ jobs:
     - name: Deploy the program
       run: |
         mkdir build/all
+        ls
         cp build/MissileGuidanceExercise build/all
         cd build/all
         windeployqt MissileGuidanceExercise --release
