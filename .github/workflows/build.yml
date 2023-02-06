@@ -43,7 +43,7 @@ jobs:
     - name: Configure the CMake project
       env:
         CMAKE_PREFIX_PATH: ${{env.Qt5_Dir}}
-      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "CodeBlocks - MinGW Makefiles" -B $env:CMAKE_CONF_DIR -DCUSTOM_BIN_OUTPUT_ROOT=$env:BIN_OUTPUT_DIR
+      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "CodeBlocks - MinGW Makefiles" -B $env:CMAKE_CONF_DIR -DCUSTOM_BIN_OUTPUT_ROOT=$env:BIN_OUTPUT_DIR -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_RULE_MESSAGES:BOOL=OFF
 
     - name: Build the project
       run: cmake --build $env:CMAKE_CONF_DIR
