@@ -7,7 +7,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      QT_VERSION:     "6.2"
+      QT_VERSION:     "5.15.2"
       MINGW_VERSION:  "win64_mingw81"
       MINGW_PATH:     "mingw81_64"
       BUILD_TYPE:     MinSizeRel
@@ -52,7 +52,7 @@ jobs:
         mkdir $env:STAGING_DIR
         cd $env:STAGING_DIR
         cp $env:CMAKE_CONF_DIR/MissileGuidanceExercise.exe $env:STAGING_DIR/
-        windeployqt --compiler-runtime --verbose 2 --qmldir ${{github.workspace}} --no-quick-import MissileGuidanceExercise.exe
+        windeployqt --compiler-runtime --verbose 2 --qmldir ${{github.workspace}} MissileGuidanceExercise.exe
         Compress-Archive -Path $env:STAGING_DIR -DestinationPath ${{github.workspace}}/artifacts.zip
     
     - name: Upload Artifacts
