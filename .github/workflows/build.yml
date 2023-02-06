@@ -11,8 +11,9 @@ jobs:
       MINGW_VERSION:  "win64_mingw81"
       MINGW_PATH:     "mingw81_64"
       BUILD_TYPE:     MinSizeRel
-      CMAKE_BIN_DIR:  ${{github.workspace}}/out
+      BIN_OUTPUT_DIR: ${{github.workspace}}/out
       CMAKE_CONF_DIR: ${{github.workspace}}/build
+      STAGING_DIR:    ${{github.workspace}}/artifacts
     
     steps:
     
@@ -20,10 +21,9 @@ jobs:
       uses: actions/checkout@v2
     
     - name: Install MinGW
-      run: echo "PLUG"
-#      uses: egor-tensin/setup-mingw@v2
-#      with:
-#        version: 8.1.0
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        version: 8.1.0
         
     - name: Install Qt
       uses: jurplel/install-qt-action@v3.0.0
@@ -42,26 +42,29 @@ jobs:
     - name: Configure the CMake project
       env:
         CMAKE_PREFIX_PATH: ${{env.Qt5_Dir}}
-      run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "CodeBlocks - MinGW Makefiles" -B $env:CMAKE_CONF_DIR
+      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "CodeBlocks - MinGW Makefiles" -B $env:CMAKE_CONF_DIR -D CUSTOM_BIN_OUTPUT_ROOT=$env:BIN_OUTPUT_DIR
 
     - name: Build the project
-      run: echo "PLUG" # cmake --build ./build
+      run: cmake --build $env:CMAKE_CONF_DIR
       
-#        cp build/MissileGuidanceExercise/ build/all
 #        cd build/all      
 #        windeployqt MissileGuidanceExercise --release
-#        Compress-Archive -Path build/all -DestinationPath build/artifacts.zip
+#        Compress-Archive -Path $env:STAGING_DIR -DestinationPath ${{github.workspace}}/artifacts.zip
 
     - name: Deploy the program
       run: |
-        mkdir $env:CMAKE_BIN_DIR/all
+        mkdir $env:STAGING_DIR
+        cp $env:BIN_OUTPUT_DIR/* $env:STAGING_DIR
+        cd $env:STAGING_DIR
+        windeployqt MissileGuidanceExercise --release
+        Get-ChildItem
         cd ${{github.workspace}}
-        Get-ChildItem -Recurse -Directory
+        Get-ChildItem -Recurse -Directory out/
     
     - name: Upload Artifacts
       run: echo "PLUG"
 #      uses: actions/upload-artifact@v2
 #      with:
 #        name: Windows-targeted executable package
-#        path: build/artifacts.zip
+#        path: ${{github.workspace}}/artifacts.zip
       
