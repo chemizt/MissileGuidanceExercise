@@ -32,10 +32,10 @@ set(PROJECT_SOURCES ${SOURCE_FILES} ${HEADER_FILES} ${TS_FILES})
 qt5_wrap_ui(UI_HEADERS ${UI})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(MissileGuidanceExercise WIN32 ${PROJECT_SOURCES} ${UI_HEADERS})
+    qt_add_executable(MGEWin64 WIN32 ${PROJECT_SOURCES} ${UI_HEADERS})
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
-    add_executable(MissileGuidanceExercise WIN32 ${PROJECT_SOURCES} ${UI_HEADERS})
+    add_executable(MGEWin64 WIN32 ${PROJECT_SOURCES} ${UI_HEADERS})
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
