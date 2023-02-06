@@ -20,11 +20,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     
-#    - name: Install MinGW
-#      uses: egor-tensin/setup-mingw@v2
-#      with:
-#        version: 8.1.0
-        
     - name: Install Qt
       uses: jurplel/install-qt-action@v3.0.0
       with:
@@ -42,7 +37,7 @@ jobs:
     - name: Configure the CMake project
       env:
         CMAKE_PREFIX_PATH: ${{env.Qt5_Dir}}
-      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "CodeBlocks - MinGW Makefiles" -B $env:CMAKE_CONF_DIR -DCUSTOM_BIN_OUTPUT_ROOT=$env:BIN_OUTPUT_DIR -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_RULE_MESSAGES:BOOL=OFF
+      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "CodeBlocks - MinGW Makefiles" -B $env:CMAKE_CONF_DIR -DCUSTOM_BIN_OUTPUT_ROOT=$env:BIN_OUTPUT_DIR
 
     - name: Build the project
       run: cmake --build $env:CMAKE_CONF_DIR
@@ -51,8 +46,8 @@ jobs:
       run: |
         mkdir $env:STAGING_DIR
         cd $env:STAGING_DIR
-        cp $env:CMAKE_CONF_DIR/MissileGuidanceExercise.exe $env:STAGING_DIR
-        windeployqt MissileGuidanceExercise --release
+        cp $env:CMAKE_CONF_DIR/MissileGuidanceExercise.exe $env:STAGING_DIR/
+        windeployqt MissileGuidanceExercise.exe --release
         Compress-Archive -Path $env:STAGING_DIR -DestinationPath ${{github.workspace}}/artifacts.zip
     
     - name: Upload Artifacts
@@ -60,4 +55,3 @@ jobs:
       with:
         name: Windows-targeted executable package
         path: ${{github.workspace}}/artifacts.zip
-      
