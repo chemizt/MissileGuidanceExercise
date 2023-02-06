@@ -12,6 +12,7 @@ jobs:
       MINGW_PATH:     "mingw81_64"
       BUILD_TYPE:     MinSizeRel
       CMAKE_BIN_DIR:  ${{github.workspace}}/out
+      CMAKE_CONF_DIR: ${{github.workspace}}/build
     
     steps:
     
@@ -19,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
     
     - name: Install MinGW
-      run: echo PLUG
+      run: echo "PLUG"
 #      uses: egor-tensin/setup-mingw@v2
 #      with:
 #        version: 8.1.0
@@ -41,24 +42,26 @@ jobs:
     - name: Configure the CMake project
       env:
         CMAKE_PREFIX_PATH: ${{env.Qt5_Dir}}
-      run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "CodeBlocks - MinGW Makefiles" -B $env:CMAKE_BIN_DIR
+      run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "CodeBlocks - MinGW Makefiles" -B $env:CMAKE_CONF_DIR
 
     - name: Build the project
-      run: echo PLUG # cmake --build ./build
+      run: echo "PLUG" # cmake --build ./build
       
+#        cp build/MissileGuidanceExercise/ build/all
+#        cd build/all      
+#        windeployqt MissileGuidanceExercise --release
+#        Compress-Archive -Path build/all -DestinationPath build/artifacts.zip
+
     - name: Deploy the program
       run: |
         mkdir $env:CMAKE_BIN_DIR/all
-        cp build/MissileGuidanceExercise/ build/all
-        cd build/all
-        windeployqt MissileGuidanceExercise --release
         cd ${{github.workspace}}
         Get-ChildItem -Recurse -Directory
-        Compress-Archive -Path build/all -DestinationPath build/artifacts.zip
     
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: Windows-targeted executable package
-        path: build/artifacts.zip
+      run: echo "PLUG"
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: Windows-targeted executable package
+#        path: build/artifacts.zip
       
