@@ -39,6 +39,6 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_include_directories(MissileGuidanceExercise PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(MGEWin64 PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-target_link_libraries(MissileGuidanceExercise PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport)
+target_link_libraries(MGEWin64 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport)
