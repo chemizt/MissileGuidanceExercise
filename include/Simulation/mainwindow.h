@@ -29,7 +29,7 @@ private:
 		Ui::MainWindow *ui;
 		QVector<double> mslX, mslY, tgtX, tgtY, hitRadX, hitRadY;
 		bool simFinished{ false };
-		void plot(Simulation& sim, bool doFilter = false);
+		void plot(bool doFilter = false, Simulation* sim = nullptr);
 
 };
 #endif // MAINWINDOW_H
