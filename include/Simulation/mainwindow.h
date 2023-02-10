@@ -26,7 +26,7 @@ class MainWindow : public QMainWindow
 
 private:
 		Ui::MainWindow *ui;
-		QVector<double> mslX, mslY, tgtX, tgtY;
+		QVector<double> mslX, mslY, tgtX, tgtY, hitRadX, hitRadY;
 		bool simFinished{false};
 		void plot(bool doFilter = false, Simulation* sim = nullptr);
 
