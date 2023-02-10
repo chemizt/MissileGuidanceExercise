@@ -88,7 +88,7 @@ void MainWindow::on_resetSimBtn_clicked()
 	plot();
 }
 
-void MainWindow::plot(bool doFilter, const Simulation* sim)
+void MainWindow::plot(bool doFilter, Simulation* sim)
 {
 	if (doFilter)
 	{
@@ -140,7 +140,7 @@ void MainWindow::plot(bool doFilter, const Simulation* sim)
 		{
 			auto lastKey = *(keys.last());
 
-			if (lastKey == mslCoords - mslProxyRadius)
+			if (lastKey == mslCoords.x() - mslProxyRadius)
 				coordMult *= -1;
 
 			// R^2 == x^2 + y^2 -> y = sqrt(R^2 - x^2)

@@ -28,7 +28,7 @@ private:
 		Ui::MainWindow *ui;
 		QVector<double> mslX, mslY, tgtX, tgtY;
 		bool simFinished{false};
-		void plot(bool doFilter = false, const Simulation* sim = nullptr);
+		void plot(bool doFilter = false, Simulation* sim = nullptr);
 
 };
 #endif // MAINWINDOW_H
