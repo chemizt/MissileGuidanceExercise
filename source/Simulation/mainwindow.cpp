@@ -23,7 +23,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui->plot->graph(1)->setPen(QPen(QColor("blue")));
 	
-	ui->plot->graph(2)->setData(ui->plot->xAxis, ui->plot->yAxis);
 	ui->plot->graph(2)->setPen(QPen(QColor("green")));
 	
 	ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
@@ -144,11 +143,11 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		xCoords.clear(); yCoords.clear();
 		
 		for (auto coordX : hitRadX)
+		{
 			xCoords.append(coordX + mslFinalX);
-		
-		for (auto coordY : hitRadY)
 			yCoords.append(coordY + mslFinalY);
-		
+		}
+
 		ui->plot->graph(2)->setData(xCoords, yCoords);
 	}
 
