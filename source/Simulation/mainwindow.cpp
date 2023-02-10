@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui->plot->graph(1)->setPen(QPen(QColor("blue")));
 	ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+	
+	std::thread dataPrepThread([&]{ prepareHitRadData(); });
+	dataPrepThread.detach();
 }
 
 MainWindow::~MainWindow()
@@ -48,7 +51,7 @@ void MainWindow::on_startSimBtn_clicked()
 	tgtY.append(sim.getTarget()->getY());
 	mslX.append(sim.getMissile()->getX());
 	mslY.append(sim.getMissile()->getY());
-	plot();
+	plot(sim);
 
 	std::thread simThread([&]{ runSim(sim); });
 	simThread.detach();
@@ -58,7 +61,7 @@ void MainWindow::on_startSimBtn_clicked()
 		if (tSinceReplot >= 0.5)
 		{
 			tSinceReplot = 0;
-			plot();
+			plot(sim);
 		}
 
 		tSinceReplot += SIM_RESOLUTION;
@@ -75,7 +78,7 @@ void MainWindow::on_startSimBtn_clicked()
 		ui->outputLabel->setStyleSheet("QLabel { color : red; }");
 	}
 
-	plot(true, &sim);
+	plot(sim, true);
 }
 
 void MainWindow::on_resetSimBtn_clicked()
@@ -85,16 +88,16 @@ void MainWindow::on_resetSimBtn_clicked()
 	ui->outputLabel->clear();
 	simFinished = false;
 
-	plot();
+	plot(sim);
 }
 
-void MainWindow::plot(bool doFilter, Simulation* sim)
+void MainWindow::plot(Simulation& sim, bool doFilter = false)
 {
 	if (doFilter)
 	{
 		auto filterData = [&](QVector<double>& keyVec, QVector<double>& valVec)
 		{
-			auto filterInterval = sim ? sim->getMissile()->getProxyRadius() * 2 : 100;
+			auto filterInterval = sim.getMissile()->getProxyRadius() * 2;
 			
 			if (keyVec.size() <= 1)
 				return;
@@ -123,40 +126,22 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 	ui->plot->graph(0)->setAdaptiveSampling(true);
 	ui->plot->graph(1)->setAdaptiveSampling(true);
 
-	if (sim)
-	{
-		auto missile = sim->getMissile();
-		auto mslCoords = missile->getCoordinates();
-		auto mslProxyRadius = missile->getProxyRadius();
-		const double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
-		const static double coordStep { 0.5 };
-		double coordMult { 1 };
-		QVector<double> keys, vals;
-
-		keys.append(mslCoords.x() + mslProxyRadius);
-		vals.append(mslCoords.y());
-
-		do
-		{
-			auto lastKey = keys.last();
-
-			if (lastKey == mslCoords.x() - mslProxyRadius)
-				coordMult *= -1;
-
-			// R^2 == x^2 + y^2 -> y = sqrt(R^2 - x^2)
-			double newKey = lastKey + coordMult * coordStep;
-			double newVal = coordMult * std::sqrt(mslProxyRadiusSq - std::pow(newKey, 2));
-
-			keys.append(newKey);
-			vals.append(newVal);
-		}
-		while (keys.last() != mslCoords.x() + mslProxyRadius - coordStep);
-
-		QCPCurve* proxyRadCircle = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
-
-		proxyRadCircle->setPen(QPen(QColor("green")));
-		proxyRadCircle->setData(keys, vals);
-	}
+	QCPCurve* proxyRadCircle = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
+	proxyRadCircle->setPen(QPen(QColor("green")));
+	
+	auto mslFinalX = mslX.last();
+	auto mslFinalY = mslY.last();
+	QVector<double> xCoords, yCoords;
+	
+	xCoords.clear(); yCoords.clear;
+	
+	for (const auto coordX : hitRadX)
+		xCoords.append(coordX + mslFinalX);
+	
+	for (const auto coordY : hitRadY)
+		yCoords.append(coordY + mslFinalY);
+	
+	proxyRadCircle->setData(xCoords, yCoords);
 
 	ui->plot->replot();
 	ui->plot->update();
@@ -175,4 +160,31 @@ void MainWindow::runSim(Simulation& sim)
 
 		simFinished = sim.mslWithinTgtHitRadius() || !sim.mslSpeedMoreThanTgtSpeed();
 	}
+}
+
+void MainWindow::prepareHitRadData()
+{
+		auto mslProxyRadius = missile->getProxyRadius();
+		const double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
+		const static double coordStep { 0.5 };
+		double coordMult { 1 };
+
+		hitRadX.append(mslProxyRadius);
+		hitRadY.append(0);
+
+		do
+		{
+			auto lastX = hitRadX.last();
+
+			if (lastX == -mslProxyRadius)
+				coordMult *= -1;
+
+			// R^2 == x^2 + y^2 -> y = sqrt(R^2 - x^2)
+			double newX = lastX + coordMult * coordStep;
+			double newY = coordMult * std::sqrt(mslProxyRadiusSq - std::pow(newX, 2));
+
+			hitRadX.append(newX);
+			hitRadY.append(newY);
+		}
+		while (hitRadX.last() != mslProxyRadius - coordStep);
 }
