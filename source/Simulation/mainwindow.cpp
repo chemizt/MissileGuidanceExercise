@@ -10,15 +10,26 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	setWindowIcon(QIcon("./icon.ico"));
 	ui->plot->legend->setVisible(true);
+
 	ui->plot->addGraph()->setName("Missile");
 	ui->plot->addGraph()->setName("Target");
+	ui->plot->addGraph()->setName("Missile Proxy Radius");
+	
 	ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
 	ui->plot->graph(0)->setLineStyle(QCPGraph::lsNone);
 	ui->plot->graph(0)->setPen(QPen(QColor("red")));
+	
 	ui->plot->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
 	ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui->plot->graph(1)->setPen(QPen(QColor("blue")));
+	
+	ui->plot->graph(2)->setData(ui->plot->xAxis, ui->plot->yAxis);
+	ui->plot->graph(2)->setPen(QPen(QColor("green")));
+	
 	ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+
+	std::thread dataPrepThread([&]{ prepareHitRadData(); });
+	dataPrepThread.detach();
 }
 
 MainWindow::~MainWindow()
@@ -50,9 +61,6 @@ void MainWindow::on_startSimBtn_clicked()
 	mslY.append(sim.getMissile()->getY());
 	plot();
 	
-	// std::thread dataPrepThread([&, this]{ prepareHitRadData(); });
-	// dataPrepThread.detach();
-
 	std::thread simThread([&]{ runSim(sim); });
 	simThread.detach();
 
@@ -125,23 +133,24 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 	ui->plot->yAxis->setScaleRatio(ui->plot->xAxis, 1);
 	ui->plot->graph(0)->setAdaptiveSampling(true);
 	ui->plot->graph(1)->setAdaptiveSampling(true);
+	ui->plot->graph(2)->setAdaptiveSampling(true);
 
-	QCPCurve* proxyRadCircle = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
-	proxyRadCircle->setPen(QPen(QColor("green")));
-	
-	auto mslFinalX = mslX.last();
-	auto mslFinalY = mslY.last();
-	QVector<double> xCoords, yCoords;
-	
-	xCoords.clear(); yCoords.clear();
-	
-	for (const auto coordX : hitRadX)
-		xCoords.append(coordX + mslFinalX);
-	
-	for (const auto coordY : hitRadY)
-		yCoords.append(coordY + mslFinalY);
-	
-	proxyRadCircle->setData(xCoords, yCoords);
+	if (doFilter && sim)
+	{
+		auto mslFinalX = mslX.last();
+		auto mslFinalY = mslY.last();
+		QVector<double> xCoords, yCoords;
+		
+		xCoords.clear(); yCoords.clear();
+		
+		for (auto coordX : hitRadX)
+			xCoords.append(coordX + mslFinalX);
+		
+		for (auto coordY : hitRadY)
+			yCoords.append(coordY + mslFinalY);
+		
+		ui->plot->graph(2)->setData(xCoords, yCoords);
+	}
 
 	ui->plot->replot();
 	ui->plot->update();
