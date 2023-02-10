@@ -138,7 +138,7 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 
 		do
 		{
-			auto lastKey = *(keys.last());
+			auto lastKey = keys.last();
 
 			if (lastKey == mslCoords.x() - mslProxyRadius)
 				coordMult *= -1;
@@ -150,7 +150,7 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 			keys.append(newKey);
 			vals.append(newVal);
 		}
-		while (*(keys.last()) != mslCoords.x() + mslProxyRadius - coordStep);
+		while (keys.last() != mslCoords.x() + mslProxyRadius - coordStep);
 
 		QCPCurve* proxyRadCircle = new QCPCurve(keys, vals);
 
