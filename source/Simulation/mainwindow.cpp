@@ -19,9 +19,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui->plot->graph(1)->setPen(QPen(QColor("blue")));
 	ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-	
-	std::thread dataPrepThread([&]{ prepareHitRadData(); });
-	dataPrepThread.detach();
 }
 
 MainWindow::~MainWindow()
@@ -52,6 +49,9 @@ void MainWindow::on_startSimBtn_clicked()
 	mslX.append(sim.getMissile()->getX());
 	mslY.append(sim.getMissile()->getY());
 	plot();
+	
+	std::thread dataPrepThread([&, this]{ prepareHitRadData(); });
+	dataPrepThread.detach();
 
 	std::thread simThread([&]{ runSim(sim); });
 	simThread.detach();
