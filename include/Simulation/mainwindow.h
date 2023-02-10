@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 	public:
-		MainWindow(QWidget *parent = nullptr);
+		MainWindow(QWidget* parent = nullptr);
 		~MainWindow();
 
 		void runSim(Simulation& sim);
@@ -28,8 +28,8 @@ class MainWindow : public QMainWindow
 private:
 		Ui::MainWindow *ui;
 		QVector<double> mslX, mslY, tgtX, tgtY, hitRadX, hitRadY;
-		bool simFinished{false};
-		void plot(bool doFilter = false, Simulation* sim = nullptr);
+		bool simFinished{ false };
+		void plot(Simulation& sim, bool doFilter = false);
 
 };
 #endif // MAINWINDOW_H
