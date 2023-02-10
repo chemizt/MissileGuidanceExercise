@@ -164,27 +164,28 @@ void MainWindow::runSim(Simulation& sim)
 
 void MainWindow::prepareHitRadData()
 {
-		auto mslProxyRadius = missile->getProxyRadius();
-		const double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
-		const static double coordStep { 0.5 };
-		double coordMult { 1 };
+	// TEMPORARY!
+	const static double mslProxyRadius = 15;
+	const double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
+	const static double coordStep { 0.5 };
+	double coordMult { 1 };
 
-		hitRadX.append(mslProxyRadius);
-		hitRadY.append(0);
+	hitRadX.append(mslProxyRadius);
+	hitRadY.append(0);
 
-		do
-		{
-			auto lastX = hitRadX.last();
+	do
+	{
+		auto lastX = hitRadX.last();
 
-			if (lastX == -mslProxyRadius)
-				coordMult *= -1;
+		if (lastX == -mslProxyRadius)
+			coordMult *= -1;
 
-			// R^2 == x^2 + y^2 -> y = sqrt(R^2 - x^2)
-			double newX = lastX + coordMult * coordStep;
-			double newY = coordMult * std::sqrt(mslProxyRadiusSq - std::pow(newX, 2));
+		// R^2 == x^2 + y^2 -> y = sqrt(R^2 - x^2)
+		double newX = lastX + coordMult * coordStep;
+		double newY = coordMult * std::sqrt(mslProxyRadiusSq - std::pow(newX, 2));
 
-			hitRadX.append(newX);
-			hitRadY.append(newY);
-		}
-		while (hitRadX.last() != mslProxyRadius - coordStep);
+		hitRadX.append(newX);
+		hitRadY.append(newY);
+	}
+	while (hitRadX.last() != mslProxyRadius - coordStep);
 }
