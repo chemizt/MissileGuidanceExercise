@@ -31,16 +31,15 @@
 *.out
 *.app
 
-#Build System
+# Build System
 **/build/**
 
-#Compiler Outputs
-**/_bin/**
+# Compiler Outputs
 **/out/**
 
-#Log Files
+# Log Files
 **/*.log
 
-#User-side configs
+# User-side configs
 *.cfg
 *.user
