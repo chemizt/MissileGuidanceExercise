@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <thread>
+#include <cmath>
 
 #include "Simulation/simulation.hpp"
 
@@ -27,7 +28,7 @@ private:
 		Ui::MainWindow *ui;
 		QVector<double> mslX, mslY, tgtX, tgtY;
 		bool simFinished{false};
-		void plot(bool doFilter = false);
+		void plot(bool doFilter = false, const Simulation* sim = nullptr);
 
 };
 #endif // MAINWINDOW_H

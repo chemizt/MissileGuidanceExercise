@@ -75,7 +75,7 @@ void MainWindow::on_startSimBtn_clicked()
 		ui->outputLabel->setStyleSheet("QLabel { color : red; }");
 	}
 
-	plot(true);
+	plot(true, &sim);
 }
 
 void MainWindow::on_resetSimBtn_clicked()
@@ -88,19 +88,21 @@ void MainWindow::on_resetSimBtn_clicked()
 	plot();
 }
 
-void MainWindow::plot(bool doFilter)
+void MainWindow::plot(bool doFilter, const Simulation* sim)
 {
 	if (doFilter)
 	{
 		auto filterData = [&](QVector<double>& keyVec, QVector<double>& valVec)
 		{
+			auto filterInterval = sim ? sim->getMissile()->getProxyRadius() * 2 : 100;
+			
 			if (keyVec.size() <= 1)
 				return;
 
 			for (auto i = 1; i < keyVec.size() - 1; ++i) // don't filter the initial and the final points
 			{
 				auto pointDist = sqrt(pow(keyVec.at(i) - keyVec.at(i - 1), 2) + pow(valVec.at(i) - valVec.at(i - 1), 2));
-				if (pointDist < 100)
+				if (pointDist < filterInterval)
 				{
 					keyVec.remove(i);
 					valVec.remove(i);
@@ -120,6 +122,42 @@ void MainWindow::plot(bool doFilter)
 	ui->plot->yAxis->setScaleRatio(ui->plot->xAxis, 1);
 	ui->plot->graph(0)->setAdaptiveSampling(true);
 	ui->plot->graph(1)->setAdaptiveSampling(true);
+
+	if (sim)
+	{
+		auto missile = sim->getMissile();
+		auto mslCoords = missile->getCoordinates();
+		auto mslProxyRadius = missile->getProxyRadius();
+		const double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
+		const static double coordStep { 0.5 };
+		double coordMult { 1 };
+		QVector<double> keys, vals;
+
+		keys.append(mslCoords.x() + mslProxyRadius);
+		vals.append(mslCoords.y());
+
+		do
+		{
+			auto lastKey = *(keys.last());
+
+			if (lastKey == mslCoords - mslProxyRadius)
+				coordMult *= -1;
+
+			// R^2 == x^2 + y^2 -> y = sqrt(R^2 - x^2)
+			double newKey = lastKey + coordMult * coordStep;
+			double newVal = coordMult * std::sqrt(mslProxyRadiusSq - std::pow(newKey, 2));
+
+			keys.append(newKey);
+			vals.append(newVal);
+		}
+		while (*(keys.last()) != mslCoords.x() + mslProxyRadius - coordStep);
+
+		QCPCurve* proxyRadCircle = new QCPCurve(keys, vals);
+
+		ui->plot->addPlottable(proxyRadCircle);
+		proxyRadCircle->setPen(QPen(QColor("green")));
+	}
+
 	ui->plot->replot();
 	ui->plot->update();
 }
