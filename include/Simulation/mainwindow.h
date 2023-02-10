@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow
 		~MainWindow();
 
 		void runSim(Simulation& sim);
+		void prepareHitRadData();
 	private slots:
 		void on_startSimBtn_clicked();
 		void on_resetSimBtn_clicked();
