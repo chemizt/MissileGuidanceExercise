@@ -50,8 +50,8 @@ void MainWindow::on_startSimBtn_clicked()
 	mslY.append(sim.getMissile()->getY());
 	plot();
 	
-	std::thread dataPrepThread([&, this]{ prepareHitRadData(); });
-	dataPrepThread.detach();
+	// std::thread dataPrepThread([&, this]{ prepareHitRadData(); });
+	// dataPrepThread.detach();
 
 	std::thread simThread([&]{ runSim(sim); });
 	simThread.detach();
