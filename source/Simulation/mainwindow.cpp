@@ -152,10 +152,10 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		}
 		while (keys.last() != mslCoords.x() + mslProxyRadius - coordStep);
 
-		QCPCurve* proxyRadCircle = new QCPCurve(keys, vals);
+		QCPCurve* proxyRadCircle = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
 
-		ui->plot->addPlottable(proxyRadCircle);
 		proxyRadCircle->setPen(QPen(QColor("green")));
+		proxyRadCircle->setData(keys, vals);
 	}
 
 	ui->plot->replot();
