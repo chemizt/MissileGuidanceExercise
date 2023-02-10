@@ -143,11 +143,11 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		xCoords.clear(); yCoords.clear();
 		
 		for (auto coordX : hitRadX)
-		{
 			xCoords.append(coordX + mslFinalX);
+		
+		for (auto coordY : hitRadY)
 			yCoords.append(coordY + mslFinalY);
-		}
-
+		
 		ui->plot->graph(2)->setData(xCoords, yCoords);
 	}
 
