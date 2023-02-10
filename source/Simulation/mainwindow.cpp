@@ -51,7 +51,7 @@ void MainWindow::on_startSimBtn_clicked()
 	tgtY.append(sim.getTarget()->getY());
 	mslX.append(sim.getMissile()->getX());
 	mslY.append(sim.getMissile()->getY());
-	plot(sim);
+	plot();
 
 	std::thread simThread([&]{ runSim(sim); });
 	simThread.detach();
@@ -61,7 +61,7 @@ void MainWindow::on_startSimBtn_clicked()
 		if (tSinceReplot >= 0.5)
 		{
 			tSinceReplot = 0;
-			plot(sim);
+			plot();
 		}
 
 		tSinceReplot += SIM_RESOLUTION;
@@ -78,7 +78,7 @@ void MainWindow::on_startSimBtn_clicked()
 		ui->outputLabel->setStyleSheet("QLabel { color : red; }");
 	}
 
-	plot(sim, true);
+	plot(true, &sim);
 }
 
 void MainWindow::on_resetSimBtn_clicked()
@@ -88,16 +88,16 @@ void MainWindow::on_resetSimBtn_clicked()
 	ui->outputLabel->clear();
 	simFinished = false;
 
-	plot(sim);
+	plot();
 }
 
-void MainWindow::plot(Simulation& sim, bool doFilter = false)
+void MainWindow::plot(bool doFilter, Simulation* sim)
 {
 	if (doFilter)
 	{
 		auto filterData = [&](QVector<double>& keyVec, QVector<double>& valVec)
 		{
-			auto filterInterval = sim.getMissile()->getProxyRadius() * 2;
+			auto filterInterval = sim->getMissile()->getProxyRadius() * 2;
 			
 			if (keyVec.size() <= 1)
 				return;
@@ -133,7 +133,7 @@ void MainWindow::plot(Simulation& sim, bool doFilter = false)
 	auto mslFinalY = mslY.last();
 	QVector<double> xCoords, yCoords;
 	
-	xCoords.clear(); yCoords.clear;
+	xCoords.clear(); yCoords.clear();
 	
 	for (const auto coordX : hitRadX)
 		xCoords.append(coordX + mslFinalX);
