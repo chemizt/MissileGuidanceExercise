@@ -20,10 +20,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Install MinGW
-      uses: egor-tensin/setup-mingw@v2
-      with:
-        version: 8.1.0
+#    - name: Install MinGW
+#      uses: egor-tensin/setup-mingw@v2
+#      with:
+#        version: 8.1.0
     
     - name: Install Qt
       uses: jurplel/install-qt-action@v3.0.0
