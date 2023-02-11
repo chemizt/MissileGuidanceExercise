@@ -176,16 +176,11 @@ void MainWindow::prepareHitRadData()
 	const static double mslProxyRadius = 15;
 	const static double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
 	const static double coordStep { 0.5 };
-	const static int stepCount = 2 * (mslProxyRadius / coordStep);
+	const static int stepCount = 4 * (mslProxyRadius / coordStep);
 	double coordMult { 1 };
-	ofstream basePointOF;
-
-	basePointOF.open("baseCirclePoints.csv", ios_base::out | ios_base::trunc);
-	basePointOF << fixed << setprecision(STANDARD_PRECISION) << "X Coord;Y Coord;\n";
 
 	hitRadX.append(mslProxyRadius);
 	hitRadY.append(0);
-	basePointOF << convertDoubleToStringWithPrecision(hitRadX.last()) + ";" + convertDoubleToStringWithPrecision(hitRadY.last()) + ";\n";
 
 	for (auto i = 0; i < stepCount; ++i)
 	{
@@ -196,9 +191,5 @@ void MainWindow::prepareHitRadData()
 		
 		hitRadX.append(lastX - coordStep * coordMult);
 		hitRadY.append(coordMult * std::sqrt(std::abs(mslProxyRadiusSq - std::pow(hitRadX.last(), 2))));
-
-		basePointOF << convertDoubleToStringWithPrecision(hitRadX.last()) + ";" + convertDoubleToStringWithPrecision(hitRadY.last()) + ";\n";
 	}
-
-	basePointOF.close();
 }
