@@ -176,7 +176,7 @@ void MainWindow::prepareHitRadData()
 	const static double mslProxyRadius = 15;
 	const static double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
 	const static double coordStep { 0.5 };
-	const static int stepCount = 2 * (mslProxyRadius / coordStep) - 1;
+	const static int stepCount = 2 * (mslProxyRadius / coordStep);
 	double coordMult { 1 };
 	ofstream basePointOF;
 
@@ -185,6 +185,7 @@ void MainWindow::prepareHitRadData()
 
 	hitRadX.append(mslProxyRadius);
 	hitRadY.append(0);
+	basePointOF << convertDoubleToStringWithPrecision(hitRadX.last()) + ";" + convertDoubleToStringWithPrecision(hitRadY.last()) + ";\n";
 
 	for (auto i = 0; i < stepCount; ++i)
 	{
