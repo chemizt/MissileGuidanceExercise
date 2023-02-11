@@ -136,6 +136,10 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 
 	if (doFilter && sim)
 	{
+		ofstream modPointOF;
+		modPointOF.open("modPoints.csv", ios_base::out | ios_base::trunc);
+		modPointOF << fixed << setprecision(STANDARD_PRECISION) << "X Coord;Y Coord;\n" << hitRadX.size() << hitRadY.size() << ";\n";
+		
 		auto mslFinalX = mslX.last();
 		auto mslFinalY = mslY.last();
 		QVector<double> xCoords, yCoords;
@@ -143,10 +147,16 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		xCoords.clear(); yCoords.clear();
 		
 		for (auto coordX : hitRadX)
+		{
 			xCoords.append(coordX + mslFinalX);
+			modPointOF << convertDoubleToStringWithPrecision(xCoords.last()) + ";";
+		}
 		
 		for (auto coordY : hitRadY)
+		{
 			yCoords.append(coordY + mslFinalY);
+			modPointOF << convertDoubleToStringWithPrecision(yCoords.last()) + ";\n";
+		}
 		
 		ui->plot->graph(2)->setData(xCoords, yCoords);
 	}
@@ -178,6 +188,10 @@ void MainWindow::prepareHitRadData()
 	const static double coordStep { 0.5 };
 	const static int stepCount = 2 * (mslProxyRadius / coordStep);
 	double coordMult { 1 };
+	ofstream basePointOF;
+
+	basePointOF.open("basePoints.csv", ios_base::out | ios_base::trunc);
+	basePointOF << fixed << setprecision(STANDARD_PRECISION) << "X Coord;Y Coord;\n";
 
 	for (auto i = 0; i < stepCount; ++i)
 	{
@@ -191,5 +205,9 @@ void MainWindow::prepareHitRadData()
 				std::pow(hitRadX.last() + coordStep * coordMult, 2)
 			)
 		);
+
+		basePointOF << convertDoubleToStringWithPrecision(hitRadX.last()) + ";" + convertDoubleToStringWithPrecision(hitRadY.last()) + ";\n";
 	}
+
+	basePointOF.close();
 }
