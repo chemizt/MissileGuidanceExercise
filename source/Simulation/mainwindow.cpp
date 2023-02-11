@@ -136,10 +136,6 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 
 	if (doFilter && sim)
 	{
-		ofstream modPointOF;
-		modPointOF.open("modPoints.csv", ios_base::out | ios_base::trunc);
-		modPointOF << fixed << setprecision(STANDARD_PRECISION) << "X Coord;Y Coord;\n" << hitRadX.size() << hitRadY.size() << ";\n";
-		
 		auto mslFinalX = mslX.last();
 		auto mslFinalY = mslY.last();
 		QVector<double> xCoords, yCoords;
@@ -147,19 +143,12 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		xCoords.clear(); yCoords.clear();
 		
 		for (auto coordX : hitRadX)
-		{
 			xCoords.append(coordX + mslFinalX);
-			modPointOF << convertDoubleToStringWithPrecision(xCoords.last()) + ";";
-		}
 		
 		for (auto coordY : hitRadY)
-		{
 			yCoords.append(coordY + mslFinalY);
-			modPointOF << convertDoubleToStringWithPrecision(yCoords.last()) + ";\n";
-		}
 		
 		ui->plot->graph(2)->setData(xCoords, yCoords);
-		modPointOF.close();
 	}
 
 	ui->plot->replot();
@@ -187,25 +176,25 @@ void MainWindow::prepareHitRadData()
 	const static double mslProxyRadius = 15;
 	const static double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
 	const static double coordStep { 0.5 };
-	const static int stepCount = 2 * (mslProxyRadius / coordStep);
+	const static int stepCount = 2 * (mslProxyRadius / coordStep) - 1;
 	double coordMult { 1 };
 	ofstream basePointOF;
 
-	basePointOF.open("basePoints.csv", ios_base::out | ios_base::trunc);
+	basePointOF.open("baseCirclePoints.csv", ios_base::out | ios_base::trunc);
 	basePointOF << fixed << setprecision(STANDARD_PRECISION) << "X Coord;Y Coord;\n";
+
+	hitRadX.append(mslProxyRadius);
+	hitRadY.append(0);
 
 	for (auto i = 0; i < stepCount; ++i)
 	{
-		if (hitRadX.last() == -mslProxyRadius)
+		auto lastX = hitRadX.last();
+		
+		if (lastX == -mslProxyRadius)
 			coordMult *= -1;
 		
-		hitRadX.append(hitRadX.last() + coordStep * coordMult);
-		hitRadY.append(
-			coordMult * std::sqrt(
-				mslProxyRadiusSq -
-				std::pow(hitRadX.last() + coordStep * coordMult, 2)
-			)
-		);
+		hitRadX.append(lastX - coordStep * coordMult);
+		hitRadY.append(coordMult * std::sqrt(std::abs(mslProxyRadiusSq - std::pow(hitRadX.last(), 2))));
 
 		basePointOF << convertDoubleToStringWithPrecision(hitRadX.last()) + ";" + convertDoubleToStringWithPrecision(hitRadY.last()) + ";\n";
 	}
