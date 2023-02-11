@@ -1,4 +1,4 @@
-name: Windows B & D
+name: WindowsB&D
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
 #      with:
 #        version: 8.1.0
 
-    - name: 'Setup MSYS2'
+    - name: Setup MSYS2
       with:
         update: true
         install: >-
