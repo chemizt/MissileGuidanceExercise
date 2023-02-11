@@ -108,7 +108,7 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 			if (keyVec.size() <= 1)
 				return;
 
-			for (auto i = 1; i < keyVec.size() - 1; ++i) // don't filter the initial and the final points
+			for (auto i = 100; i < keyVec.size() - 100; ++i) // don't filter the some initial and the final points
 			{
 				auto pointDist = sqrt(pow(keyVec.at(i) - keyVec.at(i - 1), 2) + pow(valVec.at(i) - valVec.at(i - 1), 2));
 				if (pointDist < filterInterval)
