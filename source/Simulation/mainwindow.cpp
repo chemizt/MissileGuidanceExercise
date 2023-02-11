@@ -174,26 +174,22 @@ void MainWindow::prepareHitRadData()
 {
 	// TEMPORARY!
 	const static double mslProxyRadius = 15;
-	const double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
+	const static double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
 	const static double coordStep { 0.5 };
+	const static int stepCount = 2 * (mslProxyRadius / coordStep);
 	double coordMult { 1 };
 
-	hitRadX.append(mslProxyRadius);
-	hitRadY.append(0);
-
-	do
+	for (auto i = 0; i < stepCount; ++i)
 	{
-		auto lastX = hitRadX.last();
-
-		if (lastX == -mslProxyRadius)
+		if (hitRadX.last() == -mslProxyRadius)
 			coordMult *= -1;
-
-		// R^2 == x^2 + y^2 -> y = sqrt(R^2 - x^2)
-		double newX = lastX + coordMult * coordStep;
-		double newY = coordMult * std::sqrt(mslProxyRadiusSq - std::pow(newX, 2));
-
-		hitRadX.append(newX);
-		hitRadY.append(newY);
+		
+		hitRadX.append(hitRadX.last() + coordStep * coordMult);
+		hitRadY.append(
+			coordMult * std::sqrt(
+				mslProxyRadiusSq -
+				std::pow(hitRadX.last() + coordStep * coordMult, 2)
+			)
+		);
 	}
-	while (hitRadX.last() != mslProxyRadius - coordStep);
 }
