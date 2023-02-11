@@ -1,2 +1,2 @@
 # MissileGuidanceExercise
-[![GenericBuild](https://github.com/chemizt/MissileGuidanceExercise/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/chemizt/MissileGuidanceExercise/actions/workflows/build.yml)
+[![Windows B & D](https://github.com/chemizt/MissileGuidanceExercise/actions/workflows/WindowsB&D.yml/badge.svg?branch=master)](https://github.com/chemizt/MissileGuidanceExercise/actions/workflows/WindowsB&D.yml)

@@ -1,4 +1,4 @@
-name: BuildAndDeploy
+name: Windows B & D
 
 on:
   push:
@@ -20,10 +20,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Install MinGW
-      uses: egor-tensin/setup-mingw@v2
+#    - name: Install MinGW
+#      uses: egor-tensin/setup-mingw@v2
+#      with:
+#        version: 8.1.0
+
+    - name: 'Setup MSYS2'
       with:
-        version: 8.1.0
+        update: true
+        install: >-
+          git
+          make
+        location: "${{github.workspace}}/msys"
       
     - name: Install Qt
       uses: jurplel/install-qt-action@v3.0.0
