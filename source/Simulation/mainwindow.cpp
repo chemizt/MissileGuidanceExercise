@@ -159,6 +159,7 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		}
 		
 		ui->plot->graph(2)->setData(xCoords, yCoords);
+		modPointOF.close();
 	}
 
 	ui->plot->replot();
