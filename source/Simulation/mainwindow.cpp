@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
 	ui->setupUi(this);
 
-	setWindowIcon(QIcon("./icon.ico"));
 	ui->plot->legend->setVisible(true);
 
 	ui->plot->addGraph()->setName("Missile");
