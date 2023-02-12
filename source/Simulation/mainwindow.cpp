@@ -7,8 +7,7 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	QIcon icon(":icon/icon.ico");
-	MainWindow.setIcon(icon);
+	setWindowIcon(QIcon(":icon/icon.ico"));
 
 	ui->plot->legend->setVisible(true);
 
