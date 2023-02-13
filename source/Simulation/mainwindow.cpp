@@ -7,7 +7,16 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	setWindowIcon(QIcon(":/icon.ico"));
+	setWindowIcon(QIcon(":/MGEIcon"));
+
+	radiusCurve = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
+	QPen radCurvePen(QPen(QColor("green")));
+
+	radCurvePen.setWidth(4);
+	radiusCurve->setPen(radCurvePen);
+	radiusCurve->setVisible(false);
+	radiusCurve->setBrush(QBrush(QColor(0, 128, 0, 64)));
+	radiusCurve->setName("Missile Proximity Radius");
 
 	ui->plot->legend->setVisible(true);
 
@@ -31,6 +40,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
 	delete ui;
+	delete radiusCurve;
 }
 
 void MainWindow::on_startSimBtn_clicked()
@@ -90,6 +100,7 @@ void MainWindow::on_resetSimBtn_clicked()
 	mslX.clear(); mslY.clear();
 	tgtX.clear(); tgtY.clear();
 	ui->outputLabel->clear();
+	if (radiusCurve) radiusCurve->setVisible(false);
 	simFinished = false;
 
 	plot();
@@ -132,9 +143,6 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 
 	if (doFilter && sim)
 	{
-		auto radiusCurve = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
-		radiusCurve->setPen(QPen(QColor("green")));
-		
 		auto mslFinalX = mslX.last();
 		auto mslFinalY = mslY.last();
 		QVector<double> xCoords, yCoords;

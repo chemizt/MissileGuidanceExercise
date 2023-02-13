@@ -28,6 +28,10 @@ file(GLOB_RECURSE SOURCE_FILES source/**)
 file(GLOB_RECURSE HEADER_FILES include/**)
 file(GLOB_RECURSE RESOURCE_FILES *.rc)
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    enable_language("RC")
+endif()
+
 set(PROJECT_SOURCES ${SOURCE_FILES} ${HEADER_FILES} ${TS_FILES} ${RESOURCE_FILES})
 
 qt5_wrap_ui(UI_HEADERS ${UI})
