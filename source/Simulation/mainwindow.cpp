@@ -7,13 +7,12 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	setWindowIcon(QIcon(":icon/icon.ico"));
+	setWindowIcon(QIcon(":/icon.ico"));
 
 	ui->plot->legend->setVisible(true);
 
 	ui->plot->addGraph()->setName("Missile");
 	ui->plot->addGraph()->setName("Target");
-	ui->plot->addGraph()->setName("Missile Proxy Radius");
 	
 	ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
 	ui->plot->graph(0)->setLineStyle(QCPGraph::lsNone);
@@ -22,8 +21,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->plot->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
 	ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui->plot->graph(1)->setPen(QPen(QColor("blue")));
-	
-	ui->plot->graph(2)->setPen(QPen(QColor("green")));
 	
 	ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 
@@ -132,10 +129,12 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 	ui->plot->yAxis->setScaleRatio(ui->plot->xAxis, 1);
 	ui->plot->graph(0)->setAdaptiveSampling(true);
 	ui->plot->graph(1)->setAdaptiveSampling(true);
-	ui->plot->graph(2)->setAdaptiveSampling(true);
 
 	if (doFilter && sim)
 	{
+		auto radiusCurve = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
+		radiusCurve->setPen(QPen(QColor("green")));
+		
 		auto mslFinalX = mslX.last();
 		auto mslFinalY = mslY.last();
 		QVector<double> xCoords, yCoords;
@@ -148,7 +147,7 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		for (auto coordY : hitRadY)
 			yCoords.append(coordY + mslFinalY);
 		
-		ui->plot->graph(2)->setData(xCoords, yCoords);
+		radiusCurve->setData(xCoords, yCoords);
 	}
 
 	ui->plot->replot();
