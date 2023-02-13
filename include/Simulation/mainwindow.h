@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
 private:
 		Ui::MainWindow* ui;
 		QVector<double> mslX, mslY, tgtX, tgtY, hitRadX, hitRadY;
-		QCPCurve* radiusCurve{ nullptr };
+		void* radiusCurve{ nullptr };
 		bool simFinished{ false };
 		void plot(bool doFilter = false, Simulation* sim = nullptr);
 
