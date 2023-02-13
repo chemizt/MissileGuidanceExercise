@@ -4,21 +4,24 @@
 #include "Simulation/SimObjects/Missile.hpp"
 #include "./ui_mainwindow.h"
 
+#define
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 	setWindowIcon(QIcon(":/MGEIcon"));
 
 	radiusCurve = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
+	auto radCrvCasted = static_cast<QCPCurve*>(radiusCurve);
 	QPen radCurvePen(QPen(QColor("green")));
 
 	radCurvePen.setWidth(4);
-	radiusCurve->setPen(radCurvePen);
-	radiusCurve->setVisible(false);
-	radiusCurve->setBrush(QBrush(QColor(0, 128, 0, 64)));
-	radiusCurve->setName("Missile Proximity Radius");
-	radiusCurve->setAdaptiveSampling(true);
-	radiusCurve->setAntialiased(true);
+	radCrvCasted->setPen(radCurvePen);
+	radCrvCasted->setVisible(false);
+	radCrvCasted->setBrush(QBrush(QColor(0, 128, 0, 64)));
+	radCrvCasted->setName("Missile Proximity Radius");
+	radCrvCasted->setAdaptiveSampling(true);
+	radCrvCasted->setAntialiased(true);
 
 	ui->plot->legend->setVisible(true);
 
@@ -42,7 +45,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
 	delete ui;
-	delete radiusCurve;
 }
 
 void MainWindow::on_startSimBtn_clicked()
@@ -157,7 +159,7 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		for (auto coordY : hitRadY)
 			yCoords.append(coordY + mslFinalY);
 		
-		radiusCurve->setData(xCoords, yCoords);
+		static_cast<QCPCurve*>(radiusCurve)->setData(xCoords, yCoords);
 	}
 
 	ui->plot->replot();
