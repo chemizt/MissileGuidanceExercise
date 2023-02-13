@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 	radiusCurve->setVisible(false);
 	radiusCurve->setBrush(QBrush(QColor(0, 128, 0, 64)));
 	radiusCurve->setName("Missile Proximity Radius");
+	radiusCurve->setAdaptiveSampling(true);
+	radiusCurve->setAntialiased(true);
 
 	ui->plot->legend->setVisible(true);
 
