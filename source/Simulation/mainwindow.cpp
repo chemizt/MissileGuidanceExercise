@@ -4,8 +4,6 @@
 #include "Simulation/SimObjects/Missile.hpp"
 #include "./ui_mainwindow.h"
 
-#define
-
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
@@ -20,7 +18,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 	radCrvCasted->setVisible(false);
 	radCrvCasted->setBrush(QBrush(QColor(0, 128, 0, 64)));
 	radCrvCasted->setName("Missile Proximity Radius");
-	radCrvCasted->setAdaptiveSampling(true);
 	radCrvCasted->setAntialiased(true);
 
 	ui->plot->legend->setVisible(true);
@@ -104,7 +101,7 @@ void MainWindow::on_resetSimBtn_clicked()
 	mslX.clear(); mslY.clear();
 	tgtX.clear(); tgtY.clear();
 	ui->outputLabel->clear();
-	if (radiusCurve) radiusCurve->setVisible(false);
+	if (radiusCurve) static_cast<QCPCurve*>(radiusCurve)->setVisible(false);
 	simFinished = false;
 
 	plot();
