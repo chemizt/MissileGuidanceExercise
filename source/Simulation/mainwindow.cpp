@@ -156,7 +156,9 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 		for (auto coordY : hitRadY)
 			yCoords.append(coordY + mslFinalY);
 		
-		static_cast<QCPCurve*>(radiusCurve)->setData(xCoords, yCoords);
+		auto radCrvCasted = static_cast<QCPCurve*>(radiusCurve);
+		radCrvCasted->setData(xCoords, yCoords);
+		radCrvCasted->setVisible(true);
 	}
 
 	ui->plot->replot();
