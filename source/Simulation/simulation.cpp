@@ -1,7 +1,5 @@
 #include "Simulation/simulation.hpp"
 #include "Simulation/CommonSimParams.hpp"
-#include "Simulation/SimObjects/Target.hpp"
-#include "Simulation/SimObjects/Missile.hpp"
 
 Simulation::Simulation()
 {

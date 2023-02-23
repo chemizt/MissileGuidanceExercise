@@ -3,8 +3,6 @@
 #include "Simulation/Auxilary/PIDController.hpp"
 #include "Simulation/Auxilary/utils.hpp"
 
-
-
 Missile::Missile(double initialSpeed, double initialX, double initialY) : MovingObject(initialSpeed, initialX, initialY)
 {
 	_acquiredTarget = nullptr;
