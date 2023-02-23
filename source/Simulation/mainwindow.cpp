@@ -188,7 +188,7 @@ void MainWindow::runSim()
 void MainWindow::prepareHitRadData()
 {
 	const static double degreesPerStep{ 5 };
-	QVector2D radVector{ 1 * _leSim->getMslProxyRadius(), 0 };
+	QVector2D radVector{ _leSim->getMslProxyRadius(), 0 };
 	double currentAngle{ 0 };
 
 	hitRadX.append(radVector.x());
