@@ -8,7 +8,7 @@ class PIDController;
 class Missile : public MovingObject // класс ракет
 {
 	public:
-		const struct MissileDesc
+		struct MissileDesc
 		{
 			double motorBurnTime				= 6;	// время работы двигателя
 			double motorSpecImpulse				= 235;	// удельный импульс топлива
