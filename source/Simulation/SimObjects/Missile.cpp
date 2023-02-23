@@ -5,7 +5,6 @@
 Missile::Missile(double initialSpeed, double initialX, double initialY) : MovingObject(initialSpeed, initialX, initialY)
 {
 	_acquiredTarget = nullptr;
-	_engineThrust = ;
 }
 
 void Missile::basicMove(double elapsedTime, double angleOfAttack)
