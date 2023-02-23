@@ -8,7 +8,7 @@ class PIDController;
 class Missile : public MovingObject // класс ракет
 {
 	public:
-		static const struct MissileDesc
+		const struct MissileDesc
 		{
 			double motorBurnTime				= 6;	// время работы двигателя
 			double motorSpecImpulse				= 235;	// удельный импульс топлива
@@ -24,7 +24,7 @@ class Missile : public MovingObject // класс ракет
 		};
 		Missile(double initialSpeed, double initialX, double initialY);
 		double getRemainingFuelMass() { return _remainingFuelMass; };
-		static const double getProxyRadius() { return _leDesc.proxyFuzeRadius; };
+		const double getProxyRadius() { return _leDesc.proxyFuzeRadius; };
 		MovingObject* getTarget() { return _acquiredTarget; };
 		void advancedMove(double elapsedTime);
 		void basicMove(double elapsedTime, double angleOfAttack);
@@ -37,7 +37,7 @@ class Missile : public MovingObject // класс ракет
 		double _remainingFuelMass;
 		PIDController* _guidanceComputer;
 		MovingObject* _acquiredTarget;
-		static const MissileDesc _leDesc;
+		const MissileDesc _leDesc;
 		double _calculateDynPressure();																									// вычисляет скоростной напор - 0.5 * rho * v ^ 2 * S
 		double _calculateAngleOfAttack(double inducedDragCoeff) { return inducedDragCoeff / _leDesc.DyPerDa; };							// вычисляет угол атаки по коэфф. индуктивного сопротивления
 		double _calculateDragDecelerationRate(double angleOfAttack);																	// вычисляет "замедление", вызванное сопротивлением воздуха
