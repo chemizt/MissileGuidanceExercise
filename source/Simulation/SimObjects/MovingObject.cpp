@@ -1,4 +1,5 @@
 #include "Simulation/SimObjects/MovingObject.hpp"
+#include "Simulation/Auxilary/utils.hpp"
 
 using namespace std::chrono;
 using std::mt19937_64;
