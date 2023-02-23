@@ -1,4 +1,3 @@
-#include <QTransform>
 #include "Simulation/SimObjects/MovingObject.hpp"
 
 using namespace std::chrono;

@@ -15,6 +15,7 @@
 #include <QMap>
 #include <QString>
 #include <QVector2D>
+#include <QTransform>
 
 #define STANDARD_PRECISION 5
 
