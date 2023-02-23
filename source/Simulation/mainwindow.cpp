@@ -73,7 +73,7 @@ void MainWindow::on_startSimBtn_clicked()
 	mslY.append(_leSim->getMissile()->getY());
 	plot();
 	
-	std::thread simThread([&]{ runSim(sim); });
+	std::thread simThread([&]{ runSim(); });
 	simThread.detach();
 
 	while (!simFinished)
@@ -87,12 +87,12 @@ void MainWindow::on_startSimBtn_clicked()
 		tSinceReplot += SIM_RESOLUTION;
 	}
 
-	if (sim.mslWithinTgtHitRadius())
+	if (_leSim->mslWithinTgtHitRadius())
 	{
 		ui->outputLabel->setText("Simulation's been stopped: the missile has reached the target");
 		ui->outputLabel->setStyleSheet("QLabel { color : green; }");
 	}
-	else if (!sim.mslSpeedMoreThanTgtSpeed())
+	else if (!_leSim->mslSpeedMoreThanTgtSpeed())
 	{
 		ui->outputLabel->setText("Simulation's been stopped: the missile's velocity has fallen below the target's");
 		ui->outputLabel->setStyleSheet("QLabel { color : red; }");
