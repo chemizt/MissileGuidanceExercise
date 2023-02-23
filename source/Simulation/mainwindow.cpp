@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
 	ui->setupUi(this);
 	setWindowIcon(QIcon(":/MGEIcon"));
+	_leSim = new Simulation();
 
 	radiusCurve = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
 	auto radCrvCasted = static_cast<QCPCurve*>(radiusCurve);
@@ -35,8 +36,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	std::thread dataPrepThread([&]{ prepareHitRadData(); });
 	dataPrepThread.detach();
-
-	_leSim = new Simulation();
 }
 
 MainWindow::~MainWindow()
