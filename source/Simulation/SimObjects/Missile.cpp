@@ -6,9 +6,9 @@
 Missile::Missile(double initialSpeed, double initialX, double initialY) : MovingObject(initialSpeed, initialX, initialY)
 {
 	_acquiredTarget = nullptr;
-	_remainingFuelMass = MissileParameters::motorFuelMass;
-	_fuelConsumptionRate = MissileParameters::motorFuelMass / MissileParameters::motorBurnTime;
-	_engineThrust = MissileParameters::motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC;
+	_remainingFuelMass = _leDesc.motorFuelMass;
+	_fuelConsumptionRate = _leDesc.motorFuelMass / _leDesc.motorBurnTime;
+	_engineThrust = _leDesc.motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC;
 }
 
 void Missile::basicMove(double elapsedTime, double angleOfAttack)
@@ -35,13 +35,13 @@ void Missile::advancedMove(double elapsedTime)
 		QVector2D trgLOSVec = _acquiredTarget->getCoordinates() - this->getCoordinates();
 		double velLOSAngle = getAngleBetweenVectorsRad(velocity.normalized(), trgLOSVec.normalized());
 
-		if (velLOSAngle > MissileParameters::seekerMaxOBA)
+		if (velLOSAngle > _leDesc.seekerMaxOBA)
 		{
 			_acquiredTarget = nullptr;
 			return;
 		}
 
-		steeringAngle = MissileParameters::navConstant * velLOSAngle;
+		steeringAngle = _leDesc.navConstant * velLOSAngle;
 		_rotateActingVectorsRad(steeringAngle);
 	}
 
@@ -56,9 +56,9 @@ double Missile::_calculateDragDecelerationRate(double angleOfAttack)
 	double fullDragForce = 0;
 	QString machNumberStr = QString::fromStdString(convertDoubleToStringWithPrecision(machNumber, 1, false));
 
-	if (MissileParameters::cXData.contains(machNumberStr))
+	if (_leDesc.cXData.contains(machNumberStr))
 	{
-		zeroLiftDragCoefficient = MissileParameters::cXData.value(machNumberStr);
+		zeroLiftDragCoefficient = _leDesc.cXData.value(machNumberStr);
 	}
 	else
 	{
@@ -72,7 +72,7 @@ double Missile::_calculateDragDecelerationRate(double angleOfAttack)
 
 void Missile::_setGuidanceBoundary()
 {
-	double maxNormalForce = _calculateTotalMass() * MissileParameters::maxAcceleration * FREEFALL_ACC; // вычисляем максимальную поперечную силу "торможения"
+	double maxNormalForce = _calculateTotalMass() * _leDesc.maxAcceleration * FREEFALL_ACC; // вычисляем максимальную поперечную силу "торможения"
 	double inducedDragCoeffAtMaxDecel;
 	double maxAoA;
 
@@ -90,31 +90,31 @@ double Missile::_interpolateZeroLiftDragCoefficient(double machNumber)
 
 	if (machNumber < 0.5)
 	{
-		interpolatedCoefficient = lerp(machNumber, 0, 0, 0.5, MissileParameters::cXData.value("0.5"));
+		interpolatedCoefficient = lerp(machNumber, 0, 0, 0.5, _leDesc.cXData.value("0.5"));
 	}
 	else if (machNumber < 0.9)
 	{
-		interpolatedCoefficient = lerp(machNumber, 0.5, MissileParameters::cXData.value("0.5"), 0.9, MissileParameters::cXData.value("0.9"));
+		interpolatedCoefficient = lerp(machNumber, 0.5, _leDesc.cXData.value("0.5"), 0.9, _leDesc.cXData.value("0.9"));
 	}
 	else if (machNumber < 1.2)
 	{
-		interpolatedCoefficient = lerp(machNumber, 0.9, MissileParameters::cXData.value("0.9"), 1.2, MissileParameters::cXData.value("1.2"));
+		interpolatedCoefficient = lerp(machNumber, 0.9, _leDesc.cXData.value("0.9"), 1.2, _leDesc.cXData.value("1.2"));
 	}
 	else if (machNumber < 1.5)
 	{
-		interpolatedCoefficient = lerp(machNumber, 1.2, MissileParameters::cXData.value("1.2"), 1.5, MissileParameters::cXData.value("1.5"));
+		interpolatedCoefficient = lerp(machNumber, 1.2, _leDesc.cXData.value("1.2"), 1.5, _leDesc.cXData.value("1.5"));
 	}
 	else if (machNumber < 2.0)
 	{
-		interpolatedCoefficient = lerp(machNumber, 1.5, MissileParameters::cXData.value("1.5"), 2.0, MissileParameters::cXData.value("2.0"));
+		interpolatedCoefficient = lerp(machNumber, 1.5, _leDesc.cXData.value("1.5"), 2.0, _leDesc.cXData.value("2.0"));
 	}
 	else if (machNumber < 3.0)
 	{
-		interpolatedCoefficient = lerp(machNumber, 2.0, MissileParameters::cXData.value("2.0"), 3.0, MissileParameters::cXData.value("3.0"));
+		interpolatedCoefficient = lerp(machNumber, 2.0, _leDesc.cXData.value("2.0"), 3.0, _leDesc.cXData.value("3.0"));
 	}
 	else if (machNumber < 4.0)
 	{
-		interpolatedCoefficient = lerp(machNumber, 3.0, MissileParameters::cXData.value("3.0"), 4.0, MissileParameters::cXData.value("4.0"));
+		interpolatedCoefficient = lerp(machNumber, 3.0, _leDesc.cXData.value("3.0"), 4.0, _leDesc.cXData.value("4.0"));
 	}
 
 	return interpolatedCoefficient;
@@ -122,5 +122,5 @@ double Missile::_interpolateZeroLiftDragCoefficient(double machNumber)
 
 inline double Missile::_calculateDynPressure()
 {
-	return (AIR_DENSITY * pow(getSpeed(), 2) * MissileParameters::planformArea) / 2;
+	return (AIR_DENSITY * pow(getSpeed(), 2) * _leDesc.planformArea) / 2;
 }

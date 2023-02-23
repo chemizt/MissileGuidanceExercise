@@ -20,7 +20,7 @@ class Simulation
 		Target* getTarget() { return _target; };
 		void iterate();
 		void setFileOutputNeededTo(const bool newVal);
-		static double getMslProxyRadius() { return MissileParameters::proxyFuzeRadius; };
+		static const double getMslProxyRadius() { return _missile->getProxyRadius(); };
 
 	private:
 		bool _fileOutputNeeded{ false };
