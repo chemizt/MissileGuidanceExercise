@@ -183,23 +183,20 @@ void MainWindow::runSim(Simulation& sim)
 void MainWindow::prepareHitRadData()
 {
 	// TEMPORARY!
-	const static double mslProxyRadius = 15;
-	const static double mslProxyRadiusSq = std::pow(mslProxyRadius, 2);
-	const static double coordStep { 0.5 };
-	const static int stepCount = 4 * (mslProxyRadius / coordStep);
-	double coordMult { 1 };
+	const static double mslProxyRadius{ 15. };
+	const static double degreesPerStep{ 5 };
+	QVector2D radVector{ 1 * mslProxyRadius, 0 };
+	double currentAngle{ 0 };
 
-	hitRadX.append(mslProxyRadius);
-	hitRadY.append(0);
+	hitRadX.append(radVector.x());
+	hitRadY.append(radVector.y());
 
-	for (auto i = 0; i < stepCount; ++i)
+	while (currentAngle <= 360)
 	{
-		auto lastX = hitRadX.last();
-		
-		if (lastX == -mslProxyRadius)
-			coordMult *= -1;
-		
-		hitRadX.append(lastX - coordStep * coordMult);
-		hitRadY.append(coordMult * std::sqrt(std::abs(mslProxyRadiusSq - std::pow(hitRadX.last(), 2))));
+		currentAngle += degreesPerStep;
+		rotateVec(degreesPerStep, radVector, false);
+
+		hitRadX.append(radVector.x());
+		hitRadY.append(radVector.y());
 	}
 }

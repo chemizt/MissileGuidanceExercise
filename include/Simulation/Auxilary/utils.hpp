@@ -16,13 +16,6 @@
 #include <QString>
 #include <QVector2D>
 
-#pragma region ARGUMENT_KEYS
-#define SPEED_KEY "-s"
-#define ACCELERATION_KEY "-a"
-#define OUTPUT_TO_FILE_KEY "-of"
-#define OUTPUT_COORDS_ONLY_KEY "-co"
-#pragma endregion
-
 #define STANDARD_PRECISION 5
 
 using namespace std::chrono;
@@ -46,11 +39,13 @@ struct Comma final : std::numpunct<char> // inspired by (copy-typed from) https:
 	char do_decimal_point() const override { return ','; }
 };
 
-double convertDegreesToRadians(double degrees);
+double degToRad(double degrees);
 
-double convertRadiansToDegrees(double radians);
+double radToDeg(double radians);
 
 double getAngleBetweenVectorsRad(const QVector2D& firstVector, const QVector2D& secondVector);
+
+void rotateVec(double angle, QVector2D& vector, const bool isRad = true);
 
 double lerp(double currX, double prevX, double prevY, double nextX, double nextY);
 

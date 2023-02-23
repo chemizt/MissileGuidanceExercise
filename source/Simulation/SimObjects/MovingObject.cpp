@@ -29,13 +29,6 @@ double MovingObject::_getRandomInRange(double minValue, double maxValue)
 
 void MovingObject::_rotateActingVectorsRad(double angle)
 {
-	QTransform transform = QTransform().rotateRadians(angle);
-
 	for (auto& [key, entry] : _actingVectors)
-	{
-		QPointF rotatedPoint = transform.map(entry.toPointF());
-
-		entry.setX(rotatedPoint.x());
-		entry.setY(rotatedPoint.y());
-	}
+		rotateVec(angle, entry);
 }

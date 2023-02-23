@@ -45,17 +45,22 @@ void Simulation::iterate()
 	_simElapsedTime += SIM_RESOLUTION;
 }
 
-bool Simulation::mslSpeedMoreThanTgtSpeed()
+inline double Simulation::getMslProxyRadius()
+{
+	return MissileParameters::proxyFuzeRadius;
+}
+
+inline bool Simulation::mslSpeedMoreThanTgtSpeed()
 {
 	return _missile->getRemainingFuelMass() > 0 ? true : _missile->getSpeed() > _target->getSpeed() && _missile->getTarget();
 }
 
-bool Simulation::mslWithinTgtHitRadius()
+inline bool Simulation::mslWithinTgtHitRadius()
 {
 	return _getMslTgtDistance() <= _missile->getProxyRadius();
 }
 
-double Simulation::_getMslTgtDistance()
+inline double Simulation::_getMslTgtDistance()
 {
 	return (_target->getCoordinates() - _missile->getCoordinates()).length();
 }

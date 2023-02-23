@@ -17,6 +17,7 @@ class Simulation
 		Missile* getMissile() { return _missile; };
 		Target* getTarget() { return _target; };
 		void iterate();
+		static double getMslProxyRadius();
 
 	private:
 		bool _fileOutputNeeded;

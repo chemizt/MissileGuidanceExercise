@@ -5,6 +5,21 @@
 
 class PIDController;
 
+namespace MissileParameters
+{
+	double motorBurnTime				= 6;	// время работы двигателя
+	double motorSpecImpulse				= 235;	// удельный импульс топлива
+	double motorFuelMass				= 60;	// масса топлива
+	double maxAcceleration				= 30;	// порог перегрузки ракеты
+	double emptyMass					= 230;	// масса ракеты без топлива
+	double planformArea					= 0.9;	// характеристическая площадь ракеты
+	double DyPerDa						= 1.5;	// отвал поляры
+	double proxyFuzeRadius				= 15;	// радиус поражения цели (срабатывания НВ)
+	double seekerMaxOBA					= 15;	// ширина ПЗ ГСН в одну сторону
+	double navConstant					= 1.5;	// постоянная наведения
+	QMap<QString, double> cXData {{"0.5", 0.012}, {"0.9", 0.015}, {"1.2", 0.046}, {"1.5", 0.044}, {"2.0", 0.038}, {"3.0", 0.030}, {"4.0", 0.026}};
+};
+
 class Missile : public MovingObject // класс ракет
 {
 	public:
