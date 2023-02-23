@@ -23,7 +23,7 @@ double getAngleBetweenVectorsRad(const QVector2D& firstVector, const QVector2D& 
 
 void rotateVec(double angle, QVector2D& vector, const bool isRad)
 {
-	QTransform transform = isRad ? QTransform().rotateRadians(angleDeg) : QTransform().rotate(angleRad);
+	QTransform transform = isRad ? QTransform().rotateRadians(angle) : QTransform().rotate(angle);
 	QPointF rotatedPoint = transform.map(vector.toPointF());
 
 	vector.setX(rotatedPoint.x());
