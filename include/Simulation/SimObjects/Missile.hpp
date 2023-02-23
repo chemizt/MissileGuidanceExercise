@@ -38,7 +38,7 @@ class Missile : public MovingObject // класс ракет
 		double _remainingFuelMass;
 		PIDController* _guidanceComputer;
 		MovingObject* _acquiredTarget;
-		double _calculateDynPressure() { return (AIR_DENSITY * pow(getSpeed(), 2) * MissileParameters::planformArea) / 2; };			// вычисляет скоростной напор - 0.5 * rho * v ^ 2 * S
+		double _calculateDynPressure();																									// вычисляет скоростной напор - 0.5 * rho * v ^ 2 * S
 		double _calculateAngleOfAttack(double inducedDragCoeff) { return inducedDragCoeff / MissileParameters::DyPerDa; };				// вычисляет угол атаки по коэфф. индуктивного сопротивления
 		double _calculateDragDecelerationRate(double angleOfAttack);																	// вычисляет "замедление", вызванное сопротивлением воздуха
 		double _calculateLiftInducedDragCoefficient(double angleOfAttack) { return dAoA * MissileParameters::DyPerDa; };				// вычисляет коэфф. индуктивного сопротивления по углу атаки

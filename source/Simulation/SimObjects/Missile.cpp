@@ -80,7 +80,7 @@ void Missile::_setGuidanceBoundary()
 
 	inducedDragCoeffAtMaxDecel = maxNormalForce / _calculateDynPressure(); // вычисляем КИС при максимальной перегрузке
 
-	 // вычисляем угол атаки при максимальной перегрузке и задаём в соответствии с ним пределы наведения
+	// вычисляем угол атаки при максимальной перегрузке и задаём в соответствии с ним пределы наведения
 	maxAoA = _calculateAngleOfAttack(inducedDragCoeffAtMaxDecel);
 	_guidanceComputer->setMinBoundary(-maxAoA);
 	_guidanceComputer->setMaxBoundary(maxAoA);
@@ -120,4 +120,9 @@ double Missile::_interpolateZeroLiftDragCoefficient(double machNumber)
 	}
 
 	return interpolatedCoefficient;
+}
+
+inline double Missile::_calculateDynPressure()
+{
+	return (AIR_DENSITY * pow(getSpeed(), 2) * MissileParameters::planformArea) / 2;
 }
