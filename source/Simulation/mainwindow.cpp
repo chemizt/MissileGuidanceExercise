@@ -67,10 +67,10 @@ void MainWindow::on_startSimBtn_clicked()
 
 	mslX.clear(); mslY.clear();
 	tgtX.clear(); tgtY.clear();
-	tgtX.append(sim.getTarget()->getX());
-	tgtY.append(sim.getTarget()->getY());
-	mslX.append(sim.getMissile()->getX());
-	mslY.append(sim.getMissile()->getY());
+	tgtX.append(_leSim->getTarget()->getX());
+	tgtY.append(_leSim->getTarget()->getY());
+	mslX.append(_leSim->getMissile()->getX());
+	mslY.append(_leSim->getMissile()->getY());
 	plot();
 	
 	std::thread simThread([&]{ runSim(sim); });
@@ -118,7 +118,7 @@ void MainWindow::plot(bool doFilter)
 	{
 		auto filterData = [&](QVector<double>& keyVec, QVector<double>& valVec)
 		{
-			auto filterInterval = sim->getMissile()->getProxyRadius() * 2;
+			auto filterInterval = _leSim->getMissile()->getProxyRadius() * 2;
 			
 			if (keyVec.size() <= 1)
 				return;
