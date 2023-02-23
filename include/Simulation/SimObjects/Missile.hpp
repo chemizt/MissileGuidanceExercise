@@ -24,12 +24,12 @@ class Missile : public MovingObject // класс ракет
 {
 	public:
 		Missile(double initialSpeed, double initialX, double initialY);
-		double getRemainingFuelMass();
-		double getProxyRadius();
-		MovingObject* getTarget();
+		double getRemainingFuelMass() { return _remainingFuelMass; };
+		static const double getProxyRadius() { return MissileParameters::proxyFuzeRadius; };
+		MovingObject* getTarget() { return _acquiredTarget; };
 		void advancedMove(double elapsedTime);
 		void basicMove(double elapsedTime, double angleOfAttack);
-		void setTarget(MovingObject* newTarget);
+		void setTarget(MovingObject* newTarget) { _acquiredTarget = newTarget; };
 		void setNavConstant(double mslNavConstant);
 
 	private:
@@ -38,15 +38,15 @@ class Missile : public MovingObject // класс ракет
 		double _remainingFuelMass;
 		PIDController* _guidanceComputer;
 		MovingObject* _acquiredTarget;
-		double _calculateDynPressure();										// вычисляет скоростной напор - 0.5 * rho * v ^ 2 * S
-		double _calculateAngleOfAttack(double inducedDragCoeff);			// вычисляет угол атаки по коэфф. индуктивного сопротивления
-		double _calculateDragDecelerationRate(double angleOfAttack);		// вычисляет "замедление", вызванное сопротивлением воздуха
-		double _calculateLiftInducedDragCoefficient(double angleOfAttack);	// вычисляет коэфф. индуктивного сопротивления по углу атаки
-		double _calculateMachNumber(double c);								// вычисляет число Маха
-		double _calculatePropulsionAccelerationRate();						// вычисляет ускорение, вызванное тягой двигателя
-		double _calculateTotalMass();										// вычисляет полную массу ракеты
-		double _interpolateZeroLiftDragCoefficient(double machNumber);		// вычисляет коэфф. сопротивления формы по числу Маха
-		void _setGuidanceBoundary();										// задаёт пределы углов наведения, выдаваемых регулятором наведения
+		double _calculateDynPressure() { return (AIR_DENSITY * pow(getSpeed(), 2) * MissileParameters::planformArea) / 2; };			// вычисляет скоростной напор - 0.5 * rho * v ^ 2 * S
+		double _calculateAngleOfAttack(double inducedDragCoeff) { return inducedDragCoeff / MissileParameters::DyPerDa; };				// вычисляет угол атаки по коэфф. индуктивного сопротивления
+		double _calculateDragDecelerationRate(double angleOfAttack);																	// вычисляет "замедление", вызванное сопротивлением воздуха
+		double _calculateLiftInducedDragCoefficient(double angleOfAttack) { return dAoA * MissileParameters::DyPerDa; };				// вычисляет коэфф. индуктивного сопротивления по углу атаки
+		double _calculateMachNumber(double c); { return getSpeed() / c; }																// вычисляет число Маха
+		double _calculatePropulsionAccelerationRate() { return _remainingFuelMass > 0 ? _engineThrust / _calculateTotalMass() : 0; };	// вычисляет ускорение, вызванное тягой двигателя
+		double _calculateTotalMass() { return _remainingFuelMass + MissileParameters::emptyMass; };										// вычисляет полную массу ракеты
+		double _interpolateZeroLiftDragCoefficient(double machNumber);																	// вычисляет коэфф. сопротивления формы по числу Маха
+		void _setGuidanceBoundary();																									// задаёт пределы углов наведения, выдаваемых регулятором наведения
 };
 
 #endif // MISSILE_HDR_IG

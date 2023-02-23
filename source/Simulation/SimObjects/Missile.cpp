@@ -13,21 +13,6 @@ Missile::Missile(double initialSpeed, double initialX, double initialY) : Moving
 	_engineThrust = MissileParameters::motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC;
 }
 
-double Missile::getRemainingFuelMass()
-{
-	return _remainingFuelMass;
-}
-
-double Missile::getProxyRadius()
-{
-	return MissileParameters::proxyFuzeRadius;
-}
-
-MovingObject* Missile::getTarget()
-{
-	return _acquiredTarget;
-}
-
 void Missile::basicMove(double elapsedTime, double angleOfAttack)
 {
 	// изменяем скорость за счёт тяги двигателя и сопротивления воздуха
@@ -41,8 +26,6 @@ void Missile::basicMove(double elapsedTime, double angleOfAttack)
 
 	timeSinceBirth += SIM_RESOLUTION;
 }
-
-void Missile::setTarget(MovingObject* newTarget) { _acquiredTarget = newTarget; }
 
 void Missile::advancedMove(double elapsedTime)
 {
@@ -137,34 +120,4 @@ double Missile::_interpolateZeroLiftDragCoefficient(double machNumber)
 	}
 
 	return interpolatedCoefficient;
-}
-
-double Missile::_calculateLiftInducedDragCoefficient(double dAoA)
-{
-	return dAoA * MissileParameters::DyPerDa;
-}
-
-double Missile::_calculateMachNumber(double c)
-{
-	return getSpeed() / c;
-}
-
-double Missile::_calculatePropulsionAccelerationRate()
-{
-	return _remainingFuelMass > 0 ? _engineThrust / _calculateTotalMass() : 0;
-}
-
-double Missile::_calculateTotalMass()
-{
-	return _remainingFuelMass + MissileParameters::emptyMass;
-}
-
-double Missile::_calculateAngleOfAttack(double inducedDragCoeff)
-{
-	return inducedDragCoeff / MissileParameters::DyPerDa;
-}
-
-double Missile::_calculateDynPressure()
-{
-	return (AIR_DENSITY * pow(getSpeed(), 2) * MissileParameters::planformArea) / 2;
 }

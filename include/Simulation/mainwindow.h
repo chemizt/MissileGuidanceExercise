@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow
 		MainWindow(QWidget* parent = nullptr);
 		~MainWindow();
 
-		void runSim(Simulation& sim);
+		void runSim();
 		void prepareHitRadData();
 	private slots:
 		void on_startSimBtn_clicked();
@@ -30,7 +30,8 @@ private:
 		QVector<double> mslX, mslY, tgtX, tgtY, hitRadX, hitRadY;
 		void* radiusCurve{ nullptr };
 		bool simFinished{ false };
-		void plot(bool doFilter = false, Simulation* sim = nullptr);
+		void plot(bool doFilter = false);
+		Simulation* _leSim{ nullptr };
 
 };
 #endif // MAINWINDOW_H

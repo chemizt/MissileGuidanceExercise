@@ -3,18 +3,21 @@
 #include "Simulation/SimObjects/Target.hpp"
 #include "Simulation/SimObjects/Missile.hpp"
 
+Simulation::Simulation()
+{
+	_target = new Target(0, 0, 1e5);
+	_missile = new Missile(0, 0, 0);
+	_missile->setTarget(_target);
+}
+
 Simulation::Simulation(QPointF targetLocation, double targetSpeed, QPointF missileLocation, double missileSpeed, bool fileOutputNeeded)
 {
-	_simElapsedTime = 0;
 	_fileOutputNeeded = fileOutputNeeded;
 	_target = new Target(targetSpeed, targetLocation.x(), targetLocation.y());
 	_missile = new Missile(missileSpeed, missileLocation.x(), missileLocation.y());
 
 	if (_fileOutputNeeded)
-	{
-		_outputFile.open(OUT_FILE_NAME, ios_base::out | ios_base::trunc);
-		_outputFile << fixed << setprecision(STANDARD_PRECISION) << "Time;Target X;Target Y;Target Speed (m/s);Missile X;Missile Y;Missile Speed (m/s);\n";
-	}
+		_prepOutputFile();
 
 	_missile->setTarget(_target);
 }
@@ -23,7 +26,7 @@ Simulation::~Simulation()
 {
 	delete _target;
 	delete _missile;
-	if (_fileOutputNeeded) _outputFile.close();
+	if (_outputFile.is_open()) _outputFile.close();
 }
 
 void Simulation::iterate()
@@ -43,6 +46,23 @@ void Simulation::iterate()
 	_missile->advancedMove(SIM_RESOLUTION);
 
 	_simElapsedTime += SIM_RESOLUTION;
+}
+
+void Simulation::setFileOutputNeededTo(const bool newVal)
+{
+	if (newVal && !_outputFile.is_open())
+		_prepOutputFile();
+	else if (_outputFile.is_open())
+	{
+		_outputFile << "FILE;HAS;;BEEN;;FORCIBLY;CLOSED;\n";
+		_outputFile.close();
+	}
+}
+
+Simulation::_prepOutputFile()
+{
+	_outputFile.open(OUT_FILE_NAME, ios_base::out | ios_base::trunc);
+	_outputFile << fixed << setprecision(STANDARD_PRECISION) << "Time;Target X;Target Y;Target Speed (m/s);Missile X;Missile Y;Missile Speed (m/s);\n";
 }
 
 inline double Simulation::getMslProxyRadius()

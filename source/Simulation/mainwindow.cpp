@@ -1,7 +1,5 @@
 #include "Simulation/mainwindow.h"
 #include "Simulation/CommonSimParams.hpp"
-#include "Simulation/SimObjects/Target.hpp"
-#include "Simulation/SimObjects/Missile.hpp"
 #include "./ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -37,29 +35,36 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	std::thread dataPrepThread([&]{ prepareHitRadData(); });
 	dataPrepThread.detach();
+
+	_leSim = new Simulation();
 }
 
 MainWindow::~MainWindow()
 {
 	delete ui;
+	delete _leSim;
 }
 
 void MainWindow::on_startSimBtn_clicked()
 {
-	bool fileOutputNeeded = ui->fileOCheckBox->isChecked();
-	double mslSpeed = ui->mslSpeedSpinBox->value();
-	double tgtSpeed = ui->tgtSpeedSpinBox->value();
-	double tgtYCoord = ui->distanceSpinBox->value();
-	float tSinceReplot = 0;
-	QPointF mslCoords(0, 0);
-	QPointF tgtCoords(0, tgtYCoord);
-	Simulation sim(tgtCoords, tgtSpeed, mslCoords, mslSpeed, fileOutputNeeded);
+	auto leTgt = _leSim->getTarget();
+	auto leMsl = _leSim->getMissile();
+	
+	_leSim->setFileOutputNeededTo(ui->fileOCheckBox->isChecked());
+	
+	leTgt->setCoords(0, ui->distanceSpinBox->value());
+	leTgt->setVelocity(0, -ui->tgtSpeedSpinBox->value());
+	
+	leMsl->setCoords(0, 0);
+	leMsl->setVelocity(0, ui->mslSpeedSpinBox->value());
 
 	ui->outputLabel->clear();
 	ui->outputLabel->setText("Simulation's running; please wait");
 	ui->outputLabel->setStyleSheet("QLabel { color : black; }");
 
+	float tSinceReplot = 0;
 	simFinished = false;
+
 	mslX.clear(); mslY.clear();
 	tgtX.clear(); tgtY.clear();
 	tgtX.append(sim.getTarget()->getX());
@@ -93,7 +98,7 @@ void MainWindow::on_startSimBtn_clicked()
 		ui->outputLabel->setStyleSheet("QLabel { color : red; }");
 	}
 
-	plot(true, &sim);
+	plot(true);
 }
 
 void MainWindow::on_resetSimBtn_clicked()
@@ -107,7 +112,7 @@ void MainWindow::on_resetSimBtn_clicked()
 	plot();
 }
 
-void MainWindow::plot(bool doFilter, Simulation* sim)
+void MainWindow::plot(bool doFilter)
 {
 	if (doFilter)
 	{
@@ -142,7 +147,7 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 	ui->plot->graph(0)->setAdaptiveSampling(true);
 	ui->plot->graph(1)->setAdaptiveSampling(true);
 
-	if (doFilter && sim)
+	if (doFilter && _leSim)
 	{
 		auto mslFinalX = mslX.last();
 		auto mslFinalY = mslY.last();
@@ -165,18 +170,18 @@ void MainWindow::plot(bool doFilter, Simulation* sim)
 	ui->plot->update();
 }
 
-void MainWindow::runSim(Simulation& sim)
+void MainWindow::runSim()
 {
 	while (!simFinished)
 	{
-		sim.iterate();
+		_leSim->iterate();
 
-		tgtX.append(sim.getTarget()->getX());
-		tgtY.append(sim.getTarget()->getY());
-		mslX.append(sim.getMissile()->getX());
-		mslY.append(sim.getMissile()->getY());
+		tgtX.append(_leSim->getTarget()->getX());
+		tgtY.append(_leSim->getTarget()->getY());
+		mslX.append(_leSim->getMissile()->getX());
+		mslY.append(_leSim->getMissile()->getY());
 
-		simFinished = sim.mslWithinTgtHitRadius() || !sim.mslSpeedMoreThanTgtSpeed();
+		simFinished = _leSim->mslWithinTgtHitRadius() || !_leSim->mslSpeedMoreThanTgtSpeed();
 	}
 }
 
@@ -185,7 +190,7 @@ void MainWindow::prepareHitRadData()
 	// TEMPORARY!
 	const static double mslProxyRadius{ 15. };
 	const static double degreesPerStep{ 5 };
-	QVector2D radVector{ 1 * mslProxyRadius, 0 };
+	QVector2D radVector{ 1 * _leSim->getMslProxyRadius(), 0 };
 	double currentAngle{ 0 };
 
 	hitRadX.append(radVector.x());
