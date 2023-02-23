@@ -59,28 +59,8 @@ void Simulation::setFileOutputNeededTo(const bool newVal)
 	}
 }
 
-Simulation::_prepOutputFile()
+void Simulation::_prepOutputFile()
 {
 	_outputFile.open(OUT_FILE_NAME, ios_base::out | ios_base::trunc);
 	_outputFile << fixed << setprecision(STANDARD_PRECISION) << "Time;Target X;Target Y;Target Speed (m/s);Missile X;Missile Y;Missile Speed (m/s);\n";
-}
-
-inline double Simulation::getMslProxyRadius()
-{
-	return MissileParameters::proxyFuzeRadius;
-}
-
-inline bool Simulation::mslSpeedMoreThanTgtSpeed()
-{
-	return _missile->getRemainingFuelMass() > 0 ? true : _missile->getSpeed() > _target->getSpeed() && _missile->getTarget();
-}
-
-inline bool Simulation::mslWithinTgtHitRadius()
-{
-	return _getMslTgtDistance() <= _missile->getProxyRadius();
-}
-
-inline double Simulation::_getMslTgtDistance()
-{
-	return (_target->getCoordinates() - _missile->getCoordinates()).length();
 }

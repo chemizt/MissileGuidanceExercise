@@ -12,8 +12,10 @@ class Simulation
 		Simulation();
 		Simulation(QPointF targetLocation, double targetSpeed, QPointF missileLocation, double missileSpeed, bool fileOutputNeeded);
 		~Simulation();
-		bool mslWithinTgtHitRadius();				// проверяет присутствие ракеты в зоне поражения цели
-		bool mslSpeedMoreThanTgtSpeed();			// проверяет соотношение скоростей ракеты и цели
+		// проверяет присутствие ракеты в зоне поражения цели
+		bool mslWithinTgtHitRadius() { return _getMslTgtDistance() <= _missile->getProxyRadius(); };
+		// проверяет соотношение скоростей ракеты и цели
+		bool mslSpeedMoreThanTgtSpeed() { return _missile->getRemainingFuelMass() > 0 ? true : _missile->getSpeed() > _target->getSpeed() && _missile->getTarget(); };
 		Missile* getMissile() { return _missile; };
 		Target* getTarget() { return _target; };
 		void iterate();
@@ -22,7 +24,7 @@ class Simulation
 
 	private:
 		bool _fileOutputNeeded{ false };
-		double _getMslTgtDistance();
+		double _getMslTgtDistance() { return (_target->getCoordinates() - _missile->getCoordinates()).length(); };
 		double _simElapsedTime{ 0. };
 		Missile* _missile{ nullptr };
 		ofstream _outputFile;
