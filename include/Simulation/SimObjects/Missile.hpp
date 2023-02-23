@@ -1,6 +1,7 @@
 #ifndef MISSILE_HDR_IG
 #define MISSILE_HDR_IG
 
+#include "Simulation/CommonSimParams.hpp"
 #include "MovingObject.hpp"
 
 class PIDController;
@@ -32,13 +33,13 @@ class Missile : public MovingObject // класс ракет
 		void setNavConstant(double mslNavConstant);
 
 	private:
-		double _engineThrust;
-		double _fuelConsumptionRate;
-		double _remainingFuelMass;
+		const MissileDesc _leDesc;
 		PIDController* _guidanceComputer;
 		MovingObject* _acquiredTarget;
-		const MissileDesc _leDesc;
-		double _calculateDynPressure();																									// вычисляет скоростной напор - 0.5 * rho * v ^ 2 * S
+		const double _engineThrust{ _leDesc.motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC };
+		const double _fuelConsumptionRate{ _leDesc.motorFuelMass / _leDesc.motorBurnTime };
+		double _remainingFuelMass{ _leDesc.motorFuelMass };
+		double _calculateDynPressure() { return (AIR_DENSITY * pow(getSpeed(), 2) * _leDesc.planformArea) / 2; };						// вычисляет скоростной напор - 0.5 * rho * v ^ 2 * S
 		double _calculateAngleOfAttack(double inducedDragCoeff) { return inducedDragCoeff / _leDesc.DyPerDa; };							// вычисляет угол атаки по коэфф. индуктивного сопротивления
 		double _calculateDragDecelerationRate(double angleOfAttack);																	// вычисляет "замедление", вызванное сопротивлением воздуха
 		double _calculateLiftInducedDragCoefficient(double angleOfAttack) { return angleOfAttack * _leDesc.DyPerDa; };					// вычисляет коэфф. индуктивного сопротивления по углу атаки

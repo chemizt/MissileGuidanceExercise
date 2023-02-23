@@ -1,4 +1,3 @@
-#include "Simulation/CommonSimParams.hpp"
 #include "Simulation/SimObjects/Missile.hpp"
 #include "Simulation/Auxilary/PIDController.hpp"
 #include "Simulation/Auxilary/utils.hpp"
@@ -6,9 +5,7 @@
 Missile::Missile(double initialSpeed, double initialX, double initialY) : MovingObject(initialSpeed, initialX, initialY)
 {
 	_acquiredTarget = nullptr;
-	_remainingFuelMass = _leDesc.motorFuelMass;
-	_fuelConsumptionRate = _leDesc.motorFuelMass / _leDesc.motorBurnTime;
-	_engineThrust = _leDesc.motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC;
+	_engineThrust = ;
 }
 
 void Missile::basicMove(double elapsedTime, double angleOfAttack)
@@ -118,9 +115,4 @@ double Missile::_interpolateZeroLiftDragCoefficient(double machNumber)
 	}
 
 	return interpolatedCoefficient;
-}
-
-inline double Missile::_calculateDynPressure()
-{
-	return (AIR_DENSITY * pow(getSpeed(), 2) * _leDesc.planformArea) / 2;
 }
