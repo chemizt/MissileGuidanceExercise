@@ -20,9 +20,9 @@ class Target : public MovingObject // класс целей - дополните
 		};
 
 	private:
-		double _timeSinceAccelerationChange;		// время, прошедшее с момента изменения ускорения
-		double _timeToProceedWithAcceleration;		// временной промежуток для следования с текущим ускорением
-		inline void _setUpAccelerationParameters();	// задаёт параметры ускорения
+		double _timeSinceAccelerationChange;	// время, прошедшее с момента изменения ускорения
+		double _timeToProceedWithAcceleration;	// временной промежуток для следования с текущим ускорением
+		void _setUpAccelerationParameters();	// задаёт параметры ускорения
 };
 
 #endif // TARGET_HDR_IG
