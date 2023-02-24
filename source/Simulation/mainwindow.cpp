@@ -120,12 +120,12 @@ void MainWindow::plot(bool doFilter)
 	{
 		auto filterData = [&](QVector<double>& keyVec, QVector<double>& valVec)
 		{
-			auto filterInterval = _leSim->getMissile()->getProxyRadius() * 2;
+			auto filterInterval = _leSim->getMissile()->getProxyRadius() * 5;
 			
 			if (keyVec.size() <= 1)
 				return;
 
-			for (auto i = 100; i < keyVec.size() - 100; ++i) // don't filter the some initial and the final points
+			for (auto i = 5; i < keyVec.size() - 5; ++i) // don't filter some initial and some final points
 			{
 				auto pointDist = sqrt(pow(keyVec.at(i) - keyVec.at(i - 1), 2) + pow(valVec.at(i) - valVec.at(i - 1), 2));
 				if (pointDist < filterInterval)
@@ -189,7 +189,7 @@ void MainWindow::runSim()
 
 void MainWindow::prepareHitRadData()
 {
-	const static double degreesPerStep{ 5 };
+	const static double degreesPerStep{ 0.5 };
 	QVector2D radVector{ float(_leSim->getMslProxyRadius()), 0.f };
 	double currentAngle{ 0 };
 
