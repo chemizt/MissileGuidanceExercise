@@ -4,9 +4,8 @@
 
 namespace TargetParameters
 {
-	double maxEvasiveManeuverTime = 30;			// максимальное время следования с ускорением для цели
-	double maxNormalAcceleration = 9;			// верхний порог ускорения цели
-	double minNormalAcceleration = -9;			// нижний порог ускорения цели
+	std::pair<double, double> evManeuverTimeConstraints{ 0.5, 30. };	// мин/макс время следования с ускорением для цели
+	std::pair<double, double> evManeuverAccelConstraints{ -9., 9. };	// мин/макс поперечное ускорение цели
 };
 
 Target::Target(double initialSpeed, double initialX, double initialY) : MovingObject(-initialSpeed, initialX, initialY)
@@ -46,14 +45,14 @@ void Target::advancedMove(double elapsedTime)
 	_timeSinceAccelerationChange += elapsedTime;
 
 	if (_timeSinceAccelerationChange >= _timeToProceedWithAcceleration)
-	{
 		_setUpAccelerationParameters();
-		setAccelerationRate(_getRandomInRange(TargetParameters::minNormalAcceleration, TargetParameters::maxNormalAcceleration)); // меняем ускорение
-	}
 }
 
 inline void Target::_setUpAccelerationParameters()
 {
+	using namespace TargetParameters;
+
 	_timeSinceAccelerationChange = 0;
-	_timeToProceedWithAcceleration = _getRandomInRange(TargetParameters::maxEvasiveManeuverTime * 0.5, TargetParameters::maxEvasiveManeuverTime); // задаём случайное время следования с новым ускорением
+	_timeToProceedWithAcceleration = _getRandomInRange(evManeuverTimeConstraints.first, evManeuverTimeConstraints.second);	// задаём случайное время следования с новым ускорением
+	setAccelerationRate(_getRandomInRange(evManeuverAccelConstraints.first, evManeuverAccelConstraints.second));			// меняем ускорение
 }
