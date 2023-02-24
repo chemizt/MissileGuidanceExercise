@@ -50,6 +50,7 @@ void MainWindow::on_startSimBtn_clicked()
 	auto leMsl = _leSim->getMissile();
 	
 	_leSim->setFileOutputNeededTo(ui->fileOCheckBox->isChecked());
+	_leSim->restoreSimObjects();
 	
 	leTgt->setCoords(0, ui->distanceSpinBox->value());
 	leTgt->setVelocity(0, -ui->tgtSpeedSpinBox->value());
@@ -105,6 +106,7 @@ void MainWindow::on_resetSimBtn_clicked()
 	mslX.clear(); mslY.clear();
 	tgtX.clear(); tgtY.clear();
 	ui->outputLabel->clear();
+	_leSim->restoreSimObjects();
 	if (radiusCurve) static_cast<QCPCurve*>(radiusCurve)->setVisible(false);
 	simFinished = false;
 

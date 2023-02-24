@@ -32,6 +32,7 @@ class MovingObject // базовый класс движущихся объек�
 		void setCoords(float x, float y) { _coordinates = QVector2D(x, y); }
 		void setX(const float x) { _coordinates.setX(x); }
 		void setY(const float y) { _coordinates.setY(y); }
+		virtual void restore() = 0;
 
 	protected:
 		std::unordered_map<QString, QVector2D> _actingVectors;

@@ -11,10 +11,18 @@ class Target : public MovingObject // класс целей - дополните
 		void advancedMove(double elapsedTime);
 		void basicMove(double elapsedTime);
 		void setAccelerationRate(double newAccelerationRate);
+		virtual void restore()
+		{
+			auto& accVec = _actingVectors.at("acceleration");
+			accVec.setX(0); accVec.setY(0);
+
+			_setUpAccelerationParameters();
+		};
 
 	private:
-		double _timeSinceAccelerationChange;	// время, прошедшее с момента изменения ускорения
-		double _timeToProceedWithAcceleration;	// временной промежуток для следования с текущим ускорением
+		double _timeSinceAccelerationChange;		// время, прошедшее с момента изменения ускорения
+		double _timeToProceedWithAcceleration;		// временной промежуток для следования с текущим ускорением
+		inline void _setUpAccelerationParameters();	// задаёт параметры ускорения
 };
 
 #endif // TARGET_HDR_IG

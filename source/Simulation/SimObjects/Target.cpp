@@ -11,10 +11,9 @@ namespace TargetParameters
 
 Target::Target(double initialSpeed, double initialX, double initialY) : MovingObject(-initialSpeed, initialX, initialY)
 {
-	_actingVectors.try_emplace("acceleration", QVector2D(1, 0)); // создаём вектор ускорения
+	_actingVectors.try_emplace("acceleration", QVector2D(0, 0)); // создаём вектор ускорения
 
-	_timeSinceAccelerationChange = 0;
-	_timeToProceedWithAcceleration = _getRandomInRange(TargetParameters::maxEvasiveManeuverTime * 0.5, TargetParameters::maxEvasiveManeuverTime);
+	_setUpAccelerationParameters();
 }
 
 double Target::getAccelerationRate()
@@ -48,8 +47,13 @@ void Target::advancedMove(double elapsedTime)
 
 	if (_timeSinceAccelerationChange >= _timeToProceedWithAcceleration)
 	{
-		_timeSinceAccelerationChange = 0;
+		_setUpAccelerationParameters();
 		setAccelerationRate(_getRandomInRange(TargetParameters::minNormalAcceleration, TargetParameters::maxNormalAcceleration)); // меняем ускорение
-		_timeToProceedWithAcceleration = _getRandomInRange(TargetParameters::maxEvasiveManeuverTime * 0.5, TargetParameters::maxEvasiveManeuverTime); // задаём случайное время следования с новым ускорением
 	}
+}
+
+inline void Target::_setUpAccelerationParameters()
+{
+	_timeSinceAccelerationChange = 0;
+	_timeToProceedWithAcceleration = _getRandomInRange(TargetParameters::maxEvasiveManeuverTime * 0.5, TargetParameters::maxEvasiveManeuverTime); // задаём случайное время следования с новым ускорением
 }

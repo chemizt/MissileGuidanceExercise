@@ -31,6 +31,7 @@ class Missile : public MovingObject // класс ракет
 		void basicMove(double elapsedTime, double angleOfAttack);
 		void setTarget(MovingObject* newTarget) { _acquiredTarget = newTarget; };
 		void setNavConstant(double mslNavConstant);
+		virtual void restore() { _remainingFuelMass = _leDesc.motorFuelMass; };
 
 	private:
 		const MissileDesc _leDesc;
