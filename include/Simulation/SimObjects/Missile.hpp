@@ -37,8 +37,8 @@ class Missile : public MovingObject // класс ракет
 		const MissileDesc _leDesc;
 		PIDController* _guidanceComputer;
 		MovingObject* _acquiredTarget;
-		const double _engineThrust{ _leDesc.motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC };
 		const double _fuelConsumptionRate{ _leDesc.motorFuelMass / _leDesc.motorBurnTime };
+		const double _engineThrust{ _leDesc.motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC };
 		double _remainingFuelMass{ _leDesc.motorFuelMass };
 		double _calculateDynPressure() { return (AIR_DENSITY * pow(getSpeed(), 2) * _leDesc.planformArea) / 2; };						// вычисляет скоростной напор - 0.5 * rho * v ^ 2 * S
 		double _calculateAngleOfAttack(double inducedDragCoeff) { return inducedDragCoeff / _leDesc.DyPerDa; };							// вычисляет угол атаки по коэфф. индуктивного сопротивления
