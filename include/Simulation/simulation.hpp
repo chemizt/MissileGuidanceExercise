@@ -21,7 +21,12 @@ class Simulation
 		void iterate();
 		void setFileOutputNeededTo(const bool newVal);
 		const double getMslProxyRadius() { return _missile->getProxyRadius(); };
-		void restoreSimObjects() { if (_missile) _missile->restore(); if (_target) _target->restore(); };
+		void restoreSimObjects()
+		{
+			if (_missile) _missile->restore();
+			if (_target) _target->restore();
+			if (_target && _missile) _missile->setTarget(_target);
+		};
 
 	private:
 		bool _fileOutputNeeded{ false };
