@@ -5,8 +5,7 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	// setWindowIcon(QIcon(":/MGEIcon"));
-	setWindowIcon(QIcon(":/icon.ico"));
+	setWindowIcon(QIcon(":/MGEIcon"));
 	_leSim = new Simulation();
 
 	radiusCurve = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
@@ -61,7 +60,7 @@ void MainWindow::on_startSimBtn_clicked()
 
 	ui->outputLabel->clear();
 	ui->outputLabel->setText("Simulation's running; please wait");
-	ui->outputLabel->setStyleSheet("QLabel { color : black; }");
+	ui->outputLabel->setStyleSheet("QLabel { color: black; text-align: center; }");
 
 	float tSinceReplot = 0;
 	simFinished = false;
@@ -91,12 +90,12 @@ void MainWindow::on_startSimBtn_clicked()
 	if (_leSim->mslWithinTgtHitRadius())
 	{
 		ui->outputLabel->setText("Simulation's been stopped: the missile has reached the target");
-		ui->outputLabel->setStyleSheet("QLabel { color : green; }");
+		ui->outputLabel->setStyleSheet("QLabel { color: green; text-align: center; }");
 	}
 	else if (!_leSim->mslSpeedMoreThanTgtSpeed())
 	{
 		ui->outputLabel->setText("Simulation's been stopped: the missile's velocity has fallen below the target's");
-		ui->outputLabel->setStyleSheet("QLabel { color : red; }");
+		ui->outputLabel->setStyleSheet("QLabel { color: red; text-align: center; }");
 	}
 
 	plot(true);
