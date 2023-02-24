@@ -4,8 +4,8 @@
 
 namespace TargetParameters
 {
-	std::pair<double, double> evManeuverTimeConstraints{ 0.5, 30. };	// мин/макс время следования с ускорением для цели
-	std::pair<double, double> evManeuverAccelConstraints{ -9., 9. };	// мин/макс поперечное ускорение цели
+	constexpr std::pair<double, double> evManeuverTimeConstraints{ 0.5, 30. };	// мин/макс время следования с ускорением для цели
+	constexpr std::pair<double, double> evManeuverAccelConstraints{ -9., 9. };	// мин/макс поперечное ускорение цели
 };
 
 Target::Target(double initialSpeed, double initialX, double initialY) : MovingObject(-initialSpeed, initialX, initialY)
