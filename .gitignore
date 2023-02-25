@@ -36,6 +36,7 @@
 
 # Compiler Outputs
 **/out/**
+**/_bin/**
 
 # Log Files
 **/*.log

@@ -31,13 +31,14 @@ void Missile::advancedMove(double elapsedTime)
 		QVector2D trgLOSVec = _acquiredTarget->getCoordinates() - this->getCoordinates();
 		double velLOSAngle = getAngleBetweenVectorsRad(velocity.normalized(), trgLOSVec.normalized());
 
-		if (velLOSAngle > _leDesc.seekerMaxOBA)
+		if (abs(velLOSAngle) > degToRad(_leDesc.seekerMaxOBA))
 		{
 			_acquiredTarget = nullptr;
 			return;
 		}
 
-		steeringAngle = _leDesc.navConstant * velLOSAngle;
+		auto angleLimit = degToRad(_leDesc.seekerMaxOBA);
+		steeringAngle = std::max(-angleLimit, std::min(degToRad(_leDesc.navConstant * velLOSAngle), angleLimit));
 		_rotateActingVectorsRad(steeringAngle);
 	}
 
