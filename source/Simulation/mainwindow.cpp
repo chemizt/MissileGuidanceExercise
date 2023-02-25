@@ -62,6 +62,8 @@ void MainWindow::on_startSimBtn_clicked()
 	ui->outputLabel->setText("Simulation's running; please wait");
 	ui->outputLabel->setStyleSheet("QLabel { color: black; text-align: center; }");
 
+	if (radiusCurve) static_cast<QCPCurve*>(radiusCurve)->setVisible(false);
+
 	float tSinceReplot = 0;
 	simFinished = false;
 
