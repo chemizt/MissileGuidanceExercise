@@ -20,7 +20,7 @@ class Missile : public MovingObject // класс ракет
 			double DyPerDa						= 1.5;	// отвал поляры
 			double proxyFuzeRadius				= 15;	// радиус поражения цели (срабатывания НВ)
 			double seekerMaxOBA					= 15;	// ширина ПЗ ГСН в одну сторону
-			double navConstant					= 1.5;	// постоянная наведения
+			double navConstant					= 3;	// постоянная наведения
 			QMap<QString, double> cXData {{"0.5", 0.012}, {"0.9", 0.015}, {"1.2", 0.046}, {"1.5", 0.044}, {"2.0", 0.038}, {"3.0", 0.030}, {"4.0", 0.026}};
 		};
 		Missile(double initialSpeed, double initialX, double initialY);
