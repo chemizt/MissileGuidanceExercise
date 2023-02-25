@@ -5,7 +5,7 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	setWindowIcon(QIcon(":/MGEIcon"));
+	setWindowIcon(QIcon(":/icons/icon.ico"));
 	_leSim = new Simulation();
 
 	radiusCurve = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);

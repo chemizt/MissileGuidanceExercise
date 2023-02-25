@@ -26,7 +26,7 @@ set(TS_FILES locale/MissileGuidanceExercise_ru_RU.ts)
 
 file(GLOB_RECURSE SOURCE_FILES source/**)
 file(GLOB_RECURSE HEADER_FILES include/**)
-file(GLOB_RECURSE RESOURCE_FILES *.rc)
+file(GLOB_RECURSE RESOURCE_FILES *.*rc)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     enable_language("RC")
