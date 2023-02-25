@@ -37,7 +37,7 @@ void Missile::advancedMove(double elapsedTime)
 			return;
 		}
 
-		steeringAngle = _leDesc.navConstant * velLOSAngle;
+		steeringAngle = std::max(-degToRad(15), std::min(_leDesc.navConstant * velLOSAngle, degToRad(15)));
 		_rotateActingVectorsRad(steeringAngle);
 	}
 
