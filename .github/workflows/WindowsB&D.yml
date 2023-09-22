@@ -7,9 +7,9 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      QT_VERSION:     "6.5.2"
-      MINGW_VERSION:  "win64_mingw114"
-      MINGW_PATH:     "mingw114_64"
+      QT_VERSION:     "5.15.2"
+      MINGW_VERSION:  "win64_mingw81"
+      MINGW_PATH:     "mingw81_64"
       BUILD_TYPE:     MinSizeRel
       BIN_OUTPUT_DIR: ${{github.workspace}}/out
       CMAKE_CONF_DIR: ${{github.workspace}}/build
