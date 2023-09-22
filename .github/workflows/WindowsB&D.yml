@@ -7,9 +7,9 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      QT_VERSION:     "6.5"
-      MINGW_VERSION:  "win64_mingw122"
-      MINGW_PATH:     "mingw122_64"
+      QT_VERSION:     "6.5.2"
+      MINGW_VERSION:  "win64_mingw114"
+      MINGW_PATH:     "mingw114_64"
       BUILD_TYPE:     MinSizeRel
       BIN_OUTPUT_DIR: ${{github.workspace}}/out
       CMAKE_CONF_DIR: ${{github.workspace}}/build
@@ -19,10 +19,6 @@ jobs:
     
     - name: Checkout
       uses: actions/checkout@v4
-
-    - name: Check gcc version
-      run: |
-        gcc --version
 
 #    - name: Install MinGW
 #      uses: egor-tensin/setup-mingw@v2
