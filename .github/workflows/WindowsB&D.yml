@@ -43,9 +43,13 @@ jobs:
         dir: "${{github.workspace}}/qt"
         cache: true
         
-    - name: Set Qt path and refresh the environment
+    - name: Set Qt path
       run: |
-        echo "${{github.workspace}}/qt/Qt/${{ env.QT_VERSION }}/${{ env.MINGW_PATH }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "${{github.workspace}}/qt/Qt/${{ env.QT_VERSION }}/${{ env.MINGW_PATH }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append      
+
+    - name: Refresh the environment
+      run: |
+        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         refreshenv
         
     - name: Configure the CMake project
