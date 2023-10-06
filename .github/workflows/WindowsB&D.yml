@@ -7,7 +7,8 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      QT_VERSION:     "6.6.0"
+      QT_VERSION:     "6.4.3"
+      QT_ROOTDIR:     ""
       BT_VERSION:     "win64_msvc2019_64"
       BUILD_TYPE:     MinSizeRel
       BIN_OUTPUT_DIR: ${{ github.workspace }}/out
@@ -29,12 +30,11 @@ jobs:
         cache: true
         
     - name: Set Qt path
-      run: |
-        echo "${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ env.BT_VERSION }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append      
+      run: ${{ env.QT_ROOTDIR }}="${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ env.BT_VERSION }}/bin"
 
     - name: Configure the CMake project
       env:
-        CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
+        CMAKE_PREFIX_PATH: ${{ env.QT_ROOTDIR }}
       run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Visual Studio 17 2022" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }}
 
     - name: Build the project
@@ -51,4 +51,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: MGE Windows
-        path: ${{github.workspace}}/artifacts
+        path: ${{ github.workspace }}/artifacts

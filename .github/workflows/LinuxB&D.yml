@@ -7,12 +7,13 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     env:
-      QT_VERSION:       "6.6.0"
+      QT_VERSION:       "6.4.3"
       BT_VERSION:       "gcc_64"
+      QT_ROOTDIR:       ""
       BUILD_TYPE:       MinSizeRel
-      BIN_OUTPUT_DIR:   ${{github.workspace}}/out
-      CMAKE_CONF_DIR:   ${{github.workspace}}/build
-      STAGING_DIR:      ${{github.workspace}}/artifacts
+      BIN_OUTPUT_DIR:   ${{ github.workspace }}/out
+      CMAKE_CONF_DIR:   ${{ github.workspace }}/build
+      STAGING_DIR:      ${{ github.workspace }}/artifacts
     
     steps:
     
@@ -23,32 +24,31 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         host: linux
-        version: $QT_VERSION
-        arch: $BT_VERSION
-        dir: "${{github.workspace}}/qt"
+        version: ${{ env.QT_VERSION }}
+        arch: ${{ env.BT_VERSION }}
+        dir: "${{ github.workspace }}/qt"
         cache: true
         
     - name: Set Qt path
-      run: |
-        QT_ROOT_DIR="${{github.workspace}}/qt/Qt/$QT_VERSION/$BT_VERSION/bin"
+      run: ${{ env.QT_ROOTDIR }}="${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ env.BT_VERSION }}/bin"
 
     - name: Configure the CMake project
       env:
-        CMAKE_PREFIX_PATH: $QT_ROOT_DIR
-      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G "Unix Makefiles" -B $CMAKE_CONF_DIR -DCUSTOM_BIN_OUTPUT_ROOT=$BIN_OUTPUT_DIR
+        CMAKE_PREFIX_PATH: ${{ env.QT_ROOTDIR }}
+      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G "Unix Makefiles" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }}
 
     - name: Build the project
-      run: cmake --build $CMAKE_CONF_DIR
+      run: cmake --build ${{ env.CMAKE_CONF_DIR }}
       
     - name: Deploy the program
       run: |
-        mkdir $STAGING_DIR
-        cd $STAGING_DIR
-        cp $CMAKE_CONF_DIR/MGEWin64 $STAGING_DIR/
-        # lindeployqt --compiler-runtime --qmldir ${{github.workspace}} MGEWin64
+        mkdir ${{ env.STAGING_DIR }}
+        cd ${{ env.STAGING_DIR }}
+        cp ${{ env.CMAKE_CONF_DIR }}/MGEWin64 ${{ env.STAGING_DIR }}/
+        # lindeployqt --compiler-runtime --qmldir ${{ github.workspace }} MGEWin64
     
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
         name: MGE Linux
-        path: ${{github.workspace}}/artifacts
+        path: ${{ github.workspace }}/artifacts
