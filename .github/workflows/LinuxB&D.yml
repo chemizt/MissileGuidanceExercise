@@ -1,18 +1,18 @@
-name: Windows Build&Deploy
+name: Linux Build&Deploy
 
 on:
   push:
       
 jobs:
-  build-windows:
-    runs-on: windows-latest
+  build-linux:
+    runs-on: ubuntu-latest
     env:
-      QT_VERSION:     "6.6.0"
-      BT_VERSION:     "win64_msvc2019_64"
-      BUILD_TYPE:     MinSizeRel
-      BIN_OUTPUT_DIR: ${{github.workspace}}/out
-      CMAKE_CONF_DIR: ${{github.workspace}}/build
-      STAGING_DIR:    ${{github.workspace}}/artifacts
+      QT_VERSION:       "6.6.0"
+      BT_VERSION:       "gcc_64"
+      BUILD_TYPE:       MinSizeRel
+      BIN_OUTPUT_DIR:   ${{github.workspace}}/out
+      CMAKE_CONF_DIR:   ${{github.workspace}}/build
+      STAGING_DIR:      ${{github.workspace}}/artifacts
     
     steps:
     
@@ -22,7 +22,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        host: windows
+        host: linux
         version: ${{ env.QT_VERSION }}
         arch: ${{ env.BT_VERSION }}
         dir: "${{github.workspace}}/qt"
@@ -35,7 +35,7 @@ jobs:
     - name: Configure the CMake project
       env:
         CMAKE_PREFIX_PATH: ${{env.QT_ROOT_DIR}}
-      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Visual Studio 17 2022" -B $env:CMAKE_CONF_DIR -DCUSTOM_BIN_OUTPUT_ROOT=$env:BIN_OUTPUT_DIR
+      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Unix Makefiles" -B $env:CMAKE_CONF_DIR -DCUSTOM_BIN_OUTPUT_ROOT=$env:BIN_OUTPUT_DIR
 
     - name: Build the project
       run: cmake --build $env:CMAKE_CONF_DIR
@@ -44,11 +44,11 @@ jobs:
       run: |
         mkdir $env:STAGING_DIR
         cd $env:STAGING_DIR
-        cp $env:CMAKE_CONF_DIR/MGEWin64.exe $env:STAGING_DIR/
-        windeployqt --compiler-runtime --qmldir ${{github.workspace}} MGEWin64.exe
+        cp $env:CMAKE_CONF_DIR/MGEWin64 $env:STAGING_DIR/
+        # lindeployqt --compiler-runtime --qmldir ${{github.workspace}} MGEWin64
     
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: MGE Windows
+        name: MGE Linux
         path: ${{github.workspace}}/artifacts
