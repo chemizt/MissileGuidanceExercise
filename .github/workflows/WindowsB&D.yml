@@ -30,7 +30,7 @@ jobs:
         cache: true
         
     - name: Set Qt path
-      run: echo "${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ env.BT_VERSION }}/bin" | Out-File -FilePath $env:QT_ROOTDIR -Append
+      run: echo "${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ env.BT_VERSION }}/bin" | Out-File -FilePath $env:GITHUB_ENV -Append
 
     - name: Configure the CMake project
       env:
