@@ -10,9 +10,9 @@ jobs:
       QT_VERSION:     "6.6.0"
       BT_VERSION:     "win64_msvc2019_64"
       BUILD_TYPE:     MinSizeRel
-      BIN_OUTPUT_DIR: ${{github.workspace}}/out
-      CMAKE_CONF_DIR: ${{github.workspace}}/build
-      STAGING_DIR:    ${{github.workspace}}/artifacts
+      BIN_OUTPUT_DIR: ${{ github.workspace }}/out
+      CMAKE_CONF_DIR: ${{ github.workspace }}/build
+      STAGING_DIR:    ${{ github.workspace }}/artifacts
     
     steps:
     
@@ -25,26 +25,26 @@ jobs:
         host: windows
         version: ${{ env.QT_VERSION }}
         arch: ${{ env.BT_VERSION }}
-        dir: "${{github.workspace}}/qt"
+        dir: "${{ github.workspace }}/qt"
         cache: true
         
     - name: Set Qt path
       run: |
-        echo "${{github.workspace}}/qt/Qt/${{ env.QT_VERSION }}/${{ env.BT_VERSION }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append      
+        echo "${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ env.BT_VERSION }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append      
 
     - name: Configure the CMake project
       env:
-        CMAKE_PREFIX_PATH: ${{env.QT_ROOT_DIR}}
-      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Visual Studio 17 2022" -B $env:CMAKE_CONF_DIR -DCUSTOM_BIN_OUTPUT_ROOT=$env:BIN_OUTPUT_DIR
+        CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
+      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "Visual Studio 17 2022" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }}
 
     - name: Build the project
-      run: cmake --build $env:CMAKE_CONF_DIR
+      run: cmake --build ${{ env.CMAKE_CONF_DIR }}
       
     - name: Deploy the program
       run: |
-        mkdir $env:STAGING_DIR
-        cd $env:STAGING_DIR
-        cp $env:CMAKE_CONF_DIR/MGEWin64.exe $env:STAGING_DIR/
+        mkdir ${{ env.STAGING_DIR }}
+        cd ${{ env.STAGING_DIR }}
+        cp ${{ env.CMAKE_CONF_DIR }}/MGEWin64.exe ${{ env.STAGING_DIR }}/
         windeployqt --compiler-runtime --qmldir ${{github.workspace}} MGEWin64.exe
     
     - name: Upload Artifacts
