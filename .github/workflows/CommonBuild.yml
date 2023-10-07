@@ -56,7 +56,8 @@ jobs:
           then
             mkdir '${{ env.STAGING_DIR }}'
             cd '${{ env.STAGING_DIR }}'
-            cp '${{ env.BIN_OUTPUT_DIR }}/${{ env.BUILD_TYPE }}/MGEWin64.exe' '${{ env.STAGING_DIR }}/'
+            ls -lhaR '${{ env.BIN_OUTPUT_DIR }}'
+            cp '${{ env.BIN_OUTPUT_DIR }}/bin/${{ env.BUILD_TYPE }}/MGEWin64.exe' '${{ env.STAGING_DIR }}/'
             windeployqt --compiler-runtime --qmldir ${{ github.workspace }} MGEWin64.exe
           else
             shopt -s globstar
