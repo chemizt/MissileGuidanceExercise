@@ -53,7 +53,6 @@ jobs:
       - name: Deploy the program
         run: |
           mkdir '${{ env.STAGING_DIR }}'
-          shopt -s globstar
 
           if ${{ inputs.build-for == 'windows' }}
           then
@@ -61,7 +60,13 @@ jobs:
             cp '${{ env.BIN_OUTPUT_DIR }}/MGE64.exe' ./
             windeployqt --compiler-runtime --qmldir ${{ github.workspace }} MGE64.exe
           else
-            cp -r ${{ env.BIN_OUTPUT_DIR }}/* ${{ env.STAGING_DIR }}/
+            cp ${{ env.BIN_OUTPUT_DIR }}/* ${{ env.STAGING_DIR }}/
+            cp ${{ github.workspace }}/MGE64.desktop ${{ env.STAGING_DIR }}/
+            cp ${{ github.workspace }}/icon.ico ${{ env.STAGING_DIR }}/
+
+            wget -O ./lindeployqt https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+            chmod +x ./lindeployqt
+            ./lindeployqt ${{ env.STAGING_DIR }}/MGE64
           fi
         shell: bash
 
