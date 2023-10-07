@@ -44,7 +44,7 @@ jobs:
           cache:    true
 
       - name: Set Qt Path
-        run: echo "${QT_ROOTDIR}=${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ inputs.build-with }}/bin" >> $GITHUB_ENV
+        run: QT_ROOTDIR="${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ inputs.build-with }}/bin"
         shell: bash
 
       - name: Check Qt Path
