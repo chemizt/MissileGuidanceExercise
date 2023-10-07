@@ -44,7 +44,7 @@ jobs:
 
       - name: Configure the CMake project
         env:
-          CMAKE_PREFIX_PATH: ${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ inputs.build-with }}/bin
+          CMAKE_PREFIX_PATH: ${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ inputs.build-with }}
         run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "${{ inputs.cmake-generator }}" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }}
 
       - name: Build the project
@@ -61,6 +61,7 @@ jobs:
           else
             echo "Nothing to do"
           fi
+        shell: bash
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
