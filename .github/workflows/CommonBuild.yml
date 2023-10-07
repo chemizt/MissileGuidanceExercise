@@ -1,0 +1,73 @@
+name: Common Build And Deploy
+
+on:
+  workflow_call:
+    inputs:
+      build-for:
+        required: true
+        type:     string
+      build-with:
+        required: true
+        type:     string
+      cmake-generator:
+        required: true
+        type:     string
+      runner-os:
+        required: true
+        type:     string
+
+env:
+  QT_VERSION:     "6.4.3"
+  QT_ROOTDIR:     ""
+  BUILD_TYPE:     MinSizeRel
+  BIN_OUTPUT_DIR: ${{ github.workspace }}/out
+  CMAKE_CONF_DIR: ${{ github.workspace }}/build
+  STAGING_DIR:    ${{ github.workspace }}/artifacts
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runner-os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          host:     ${{ inputs.build-for }}
+          version:  ${{ env.QT_VERSION }}
+          arch:     ${{ inputs.build-with }}
+          dir:      "${{ github.workspace }}/qt"
+          cache:    true
+
+      - name: Set Qt Path
+        run: echo "${QT_ROOTDIR}=${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ inputs.build-with }}/bin" >> "$GITHUB_ENV"
+
+      - name: Check Qt Path
+        run: echo ${{ env.QT_ROOTDIR }}
+
+      - name: Configure the CMake project
+        env:
+          CMAKE_PREFIX_PATH: ${{ env.QT_ROOTDIR }}
+        run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "${{ inputs.cmake-generator }}" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }}
+
+      - name: Build the project
+        run: cmake --build ${{ env.CMAKE_CONF_DIR }}
+
+      - name: Deploy the program
+        run: |
+          if ${{ inputs.build-for == 'Windows' }}
+          then
+            mkdir ${{ env.STAGING_DIR }}
+            cd ${{ env.STAGING_DIR }}
+            cp ${{ env.CMAKE_CONF_DIR }}/MGEWin64.exe ${{ env.STAGING_DIR }}/
+            windeployqt --compiler-runtime --qmldir ${{ github.workspace }} MGEWin64.exe
+          else
+            echo "Nothing to do"
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: "MGE for ${{ inputs.build-for }}"
+          path: ${{ github.workspace }}/artifacts
