@@ -62,7 +62,7 @@ jobs:
           else
             cp ${{ env.BIN_OUTPUT_DIR }}/* ${{ env.STAGING_DIR }}/
             cp ${{ github.workspace }}/MGE64.desktop ${{ env.STAGING_DIR }}/
-            cp ${{ github.workspace }}/icon.ico ${{ env.STAGING_DIR }}/
+            # cp ${{ github.workspace }}/icon.ico ${{ env.STAGING_DIR }}/
 
             wget -O ./lindeployqt https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
             sudo apt update && sudo apt install fuse -y
