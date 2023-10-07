@@ -22,9 +22,9 @@ on:
 env:
   QT_VERSION:     "6.4.3"
   BUILD_TYPE:     MinSizeRel
-  BIN_OUTPUT_DIR: ${{ github.workspace }}/out
-  CMAKE_CONF_DIR: ${{ github.workspace }}/build
-  STAGING_DIR:    ${{ github.workspace }}/artifacts
+  BIN_OUTPUT_DIR: "${{ github.workspace }}/out"
+  CMAKE_CONF_DIR: "${{ github.workspace }}/build"
+  STAGING_DIR:    "${{ github.workspace }}/artifacts"
 
 jobs:
   build:
@@ -67,4 +67,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: "MGE for ${{ inputs.build-for-flair }}"
-          path: ${{ github.workspace }}/artifacts
+          path: ${{ env.STAGING_DIR }}
