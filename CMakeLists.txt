@@ -36,13 +36,13 @@ set(PROJECT_SOURCES ${SOURCE_FILES} ${HEADER_FILES} ${TS_FILES} ${RESOURCE_FILES
 qt_wrap_ui(UI_HEADERS ${UI})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(MGEWin64 WIN32 ${PROJECT_SOURCES} ${UI_HEADERS})
+    qt_add_executable(MGE64 WIN32 ${PROJECT_SOURCES} ${UI_HEADERS})
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
-    add_executable(MGEWin64 WIN32 ${PROJECT_SOURCES} ${UI_HEADERS})
+    add_executable(MGE64 WIN32 ${PROJECT_SOURCES} ${UI_HEADERS})
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_include_directories(MGEWin64 PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(MGE64 PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-target_link_libraries(MGEWin64 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport)
+target_link_libraries(MGE64 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport)

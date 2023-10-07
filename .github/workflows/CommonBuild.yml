@@ -20,11 +20,11 @@ on:
         type:     string
 
 env:
-  QT_VERSION:     "6.4.3"
-  BUILD_TYPE:     MinSizeRel
-  BIN_OUTPUT_DIR: ${{ github.workspace }}/out
-  CMAKE_CONF_DIR: ${{ github.workspace }}/build
-  STAGING_DIR:    ${{ github.workspace }}/artifacts
+  QT_VERSION:       "6.4.3"
+  CMAKE_BUILD_TYPE: MinSizeRel
+  BIN_OUTPUT_DIR:   ${{ github.workspace }}/out
+  CMAKE_CONF_DIR:   ${{ github.workspace }}/build
+  STAGING_DIR:      ${{ github.workspace }}/artifacts
 
 jobs:
   build:
@@ -45,7 +45,7 @@ jobs:
       - name: Configure the CMake project
         env:
           CMAKE_PREFIX_PATH: ${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ inputs.build-with }}
-        run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -G "${{ inputs.cmake-generator }}" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }}
+        run: cmake -G "${{ inputs.cmake-generator }}" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }}
 
       - name: Build the project
         run: cmake --build ${{ env.CMAKE_CONF_DIR }}
@@ -57,8 +57,8 @@ jobs:
             mkdir '${{ env.STAGING_DIR }}'
             cd '${{ env.STAGING_DIR }}'
             ls -lhaR '${{ env.BIN_OUTPUT_DIR }}'
-            cp '${{ env.BIN_OUTPUT_DIR }}/bin/${{ env.BUILD_TYPE }}/MGEWin64.exe' '${{ env.STAGING_DIR }}/'
-            windeployqt --compiler-runtime --qmldir ${{ github.workspace }} MGEWin64.exe
+            cp '${{ env.BIN_OUTPUT_DIR }}/MGE64.exe' './'
+            windeployqt --compiler-runtime --qmldir ${{ github.workspace }} MGE64.exe
           else
             shopt -s globstar
             ls '${{ env.BIN_OUTPUT_DIR }}/'
