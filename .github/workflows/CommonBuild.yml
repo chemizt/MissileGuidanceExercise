@@ -59,6 +59,7 @@ jobs:
             cp '${{ env.CMAKE_CONF_DIR }}/MGEWin64.exe' '${{ env.STAGING_DIR }}/'
             windeployqt --compiler-runtime --qmldir ${{ github.workspace }} MGEWin64.exe
           else
+            shopt -s globstar            
             cp -r '${{ env.BIN_OUTPUT_DIR }}/*' '${{ env.STAGING_DIR }}/'
           fi
         shell: bash
