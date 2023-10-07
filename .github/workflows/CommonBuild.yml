@@ -45,14 +45,15 @@ jobs:
       - name: Configure the CMake project
         env:
           CMAKE_PREFIX_PATH: ${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ inputs.build-with }}
-        run: cmake -G "${{ inputs.cmake-generator }}" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }}
+        run: cmake -G "${{ inputs.cmake-generator }}" -B ${{ env.CMAKE_CONF_DIR }} -DCUSTOM_BIN_OUTPUT_ROOT=${{ env.BIN_OUTPUT_DIR }} -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}
 
       - name: Build the project
-        run: cmake --build ${{ env.CMAKE_CONF_DIR }}
+        run: cmake --build ${{ env.CMAKE_CONF_DIR }} --config ${{ env.CMAKE_BUILD_TYPE }}
 
       - name: Deploy the program
         run: |
           mkdir '${{ env.STAGING_DIR }}'
+          shopt -s globstar
 
           if ${{ inputs.build-for == 'windows' }}
           then

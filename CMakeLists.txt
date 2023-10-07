@@ -9,7 +9,6 @@ if(DEFINED CUSTOM_BIN_OUTPUT_ROOT)
 endif()
 
 message(BIN_OUTPUT_ROOT="${BIN_OUTPUT_ROOT}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_ROOT})
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC OFF)
@@ -45,5 +44,5 @@ else()
 endif()
 
 target_include_directories(MGE64 PUBLIC ${CMAKE_SOURCE_DIR}/include)
-
 target_link_libraries(MGE64 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport)
+set_target_properties(MGE64 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_ROOT})
