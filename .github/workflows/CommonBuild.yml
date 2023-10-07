@@ -45,9 +45,11 @@ jobs:
 
       - name: Set Qt Path
         run: echo "${QT_ROOTDIR}=${{ github.workspace }}/qt/Qt/${{ env.QT_VERSION }}/${{ inputs.build-with }}/bin" >> "$GITHUB_ENV"
+        shell: bash
 
       - name: Check Qt Path
         run: echo ${{ env.QT_ROOTDIR }}
+        shell: bash
 
       - name: Configure the CMake project
         env:
