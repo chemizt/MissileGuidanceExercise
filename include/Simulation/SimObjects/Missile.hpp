@@ -31,7 +31,7 @@ class Missile : public MovingObject // класс ракет
 		void advancedMove(double elapsedTime);
 		void basicMove(double elapsedTime, double angleOfAttack);
 		void setTarget(MovingObject* newTarget) { _acquiredTarget = newTarget; };
-		void setNavConstant(double mslNavConstant) { std::remove_const<Missile::MissileDesc>::type _leLocalDesc; _leLocalDesc.navConstant = mslNavConstant; };
+		void setNavConstant(double mslNavConstant) { const_cast<Missile::MissileDesc>(_leDesc).navConstant = mslNavConstant; };
 		virtual void restore() { _remainingFuelMass = _leDesc.motorFuelMass; };
 
 	private:
