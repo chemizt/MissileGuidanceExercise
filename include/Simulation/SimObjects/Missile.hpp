@@ -31,13 +31,14 @@ class Missile : public MovingObject // класс ракет
 		void advancedMove(double elapsedTime);
 		void basicMove(double elapsedTime, double angleOfAttack);
 		void setTarget(MovingObject* newTarget) { _acquiredTarget = newTarget; };
-		void setNavConstant(double mslNavConstant) { _leDesc.navConstant = mslNavConstant; };
+		void setNavConstant(double mslNavConstant) { _navConstant = mslNavConstant; };
 		virtual void restore() { _remainingFuelMass = _leDesc.motorFuelMass; };
 
 	private:
-		/* const */ MissileDesc _leDesc;
+		const MissileDesc _leDesc;
 		PIDController* _guidanceComputer{ nullptr };
 		MovingObject* _acquiredTarget{ nullptr };
+		double _navConstant{ _leDesc.navConstant };
 		const double _fuelConsumptionRate{ _leDesc.motorFuelMass / _leDesc.motorBurnTime };
 		const double _engineThrust{ _leDesc.motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC };
 		double _remainingFuelMass{ _leDesc.motorFuelMass };

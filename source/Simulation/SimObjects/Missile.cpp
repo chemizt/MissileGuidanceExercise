@@ -37,7 +37,7 @@ void Missile::advancedMove(double elapsedTime)
 		}
 
 		auto angleLimit = degToRad(_leDesc.seekerMaxOBA);
-		steeringAngle = std::max(-angleLimit, std::min(degToRad(_leDesc.navConstant * velLOSAngle), angleLimit));
+		steeringAngle = std::max(-angleLimit, std::min(degToRad(_navConstant * velLOSAngle), angleLimit));
 		_rotateActingVectorsRad(steeringAngle);
 	}
 
