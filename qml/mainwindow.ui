@@ -13,23 +13,51 @@
   <property name="windowTitle">
    <string>Missile Guidance Sim</string>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <property name="bottomMargin">
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMaximumSize</enum>
+      </property>
       <item>
-       <widget class="QGroupBox" name="mslGroupBox">
+       <widget class="QTabWidget" name="tabWidget">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="title">
-         <string>Missile's Initial Velocity</string>
+        <property name="tabShape">
+         <enum>QTabWidget::Rounded</enum>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <property name="tabBarAutoHide">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="mslTab">
+         <attribute name="title">
+          <string>Missile Parameters</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QGroupBox" name="mslGroupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>Initial Velocity</string>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
@@ -64,6 +92,44 @@
         </layout>
        </widget>
       </item>
+          <item>
+           <widget class="QGroupBox" name="navConstGroupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>Navigation Constant</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QDoubleSpinBox" name="navConstDoubleSpinBox">
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <double>10.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+               <property name="value">
+                <double>1.500000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tgtTab">
+         <attribute name="title">
+          <string>Target Parameters</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QGroupBox" name="tgtGroupBox">
         <property name="sizePolicy">
@@ -73,7 +139,7 @@
          </sizepolicy>
         </property>
         <property name="title">
-         <string>Target's Initial Velocity</string>
+             <string>Initial Velocity</string>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
@@ -103,7 +169,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="navConstGroupBox">
+           <widget class="QGroupBox" name="tgtEvActGroupBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -111,28 +177,32 @@
          </sizepolicy>
         </property>
         <property name="title">
-         <string>Missile's Navigation Constant</string>
+             <string>Evasive Action</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
-          <widget class="QDoubleSpinBox" name="navConstDoubleSpinBox">
-           <property name="decimals">
-            <number>1</number>
+              <widget class="QCheckBox" name="tgtEvActCheckBox">
+               <property name="text">
+                <string>Enabled</string>
            </property>
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.500000000000000</double>
+               <property name="checked">
+                <bool>true</bool>
            </property>
           </widget>
          </item>
         </layout>
        </widget>
       </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="simTab">
+         <attribute name="title">
+          <string>Simulation Parameters</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
        <widget class="QGroupBox" name="dstGroupBox">
         <property name="sizePolicy">
@@ -172,34 +242,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="tgtEvActGroupBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="title">
-         <string>Target Evasive Action</string>
-        </property>
-        <property name="checkable">
-         <bool>false</bool>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
-         <item>
-          <widget class="QCheckBox" name="tgtEvActCheckBox">
-           <property name="text">
-            <string>Enabled</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
        <widget class="QGroupBox" name="simControlGroupBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -214,7 +256,10 @@
          <item>
           <widget class="QCheckBox" name="fileOCheckBox">
            <property name="text">
-            <string>Output Into File</string>
+                <string>Log Into File</string>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -245,14 +290,34 @@
           </widget>
          </item>
         </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>
     </item>
     <item row="1" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMinimumSize</enum>
+      </property>
       <item>
-       <widget class="QCustomPlot" name="plot" native="true"/>
+       <widget class="QCustomPlot" name="plot" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>640</width>
+          <height>480</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="outputLabel">
@@ -287,6 +352,29 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1171</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <widget class="QMenu" name="menuLanguage">
+     <property name="title">
+      <string>Language</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="menuLanguage"/>
+   </widget>
+   <addaction name="menuOptions"/>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>

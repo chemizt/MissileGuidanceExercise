@@ -61,7 +61,7 @@ void MainWindow::on_startSimBtn_clicked()
 	leMsl->setNavConstant(ui->navConstDoubleSpinBox->value());
 
 	ui->outputLabel->clear();
-	ui->outputLabel->setText("Simulation's running; please wait");
+	ui->outputLabel->setText(tr("Simulation's running; please wait"));
 	ui->outputLabel->setStyleSheet("QLabel { color: black; text-align: center; }");
 
 	if (radiusCurve) static_cast<QCPCurve*>(radiusCurve)->setVisible(false);
@@ -93,12 +93,12 @@ void MainWindow::on_startSimBtn_clicked()
 
 	if (_leSim->mslWithinTgtHitRadius())
 	{
-		ui->outputLabel->setText("Simulation's been stopped: the missile has reached the target");
+		ui->outputLabel->setText(tr("Simulation's been stopped: the missile has reached the target"));
 		ui->outputLabel->setStyleSheet("QLabel { color: green; text-align: center; }");
 	}
 	else if (!_leSim->mslSpeedMoreThanTgtSpeed())
 	{
-		ui->outputLabel->setText("Simulation's been stopped: the missile's velocity has fallen below the target's");
+		ui->outputLabel->setText(tr("Simulation's been stopped: the missile's velocity has fallen below the target's"));
 		ui->outputLabel->setStyleSheet("QLabel { color: red; text-align: center; }");
 	}
 
@@ -206,5 +206,96 @@ void MainWindow::prepareHitRadData()
 
 		hitRadX.append(radVector.x());
 		hitRadY.append(radVector.y());
+	}
+}
+
+void MainWindow::_createLangMenu(void)
+{
+	auto langGroup = new QActionGroup(ui->menuLanguage);
+	auto defaultLocale = QLocale::system().name();
+
+	langGroup->setExclusive(true);
+
+	connect(langGroup, SIGNAL(triggered(QAction*)), this, SLOT(slotLangChanged(QAction*)));
+
+	defaultLocale.truncate(defaultLocale.lastIndexOf('_'));
+
+	langPath = QApplication::applicationDirPath() + "/translations";
+
+	QDir langDir(langPath);
+	QStringList fileNames = langDir.entryList(QStringList("qt_*.qm"));
+
+	for (auto fName : fileNames)
+	{
+		QString locale = fName;
+		locale.truncate(locale.lastIndexOf('.'));
+		locale.remove(0, locale.lastIndexOf('_'));
+
+		QString lang = QLocale::languageToString(QLocale(locale).language());
+		auto action = new QAction(lang, this);
+		action->setCheckable(true);
+		action->setData(locale);
+
+		ui->menuLanguage->addAction(action);
+		langGroup->addAction(action);
+
+		if (defaultLocale == locale)
+			action->setChecked(true);
+	}
+}
+
+void MainWindow::slotLangChanged(QAction* action)
+{
+	if (action)
+		_loadLanguage(action->data().toString());
+}
+
+void MainWindow::_changeEvent(QEvent* event)
+{
+	if (event)
+	{
+		switch (event->type())
+		{
+			case QEvent::LanguageChange:
+			{
+				ui->retranslateUi(this);
+				break;
+			}
+			case QEvent::LocaleChange:
+			{
+				QString locale = QLocale::system().name();
+				locale.truncate(locale.lastIndexOf('_'));
+				_loadLanguage(locale);
+			}
+			default:
+				break;
+		}
+	}
+
+	QMainWindow::changeEvent(event);
+}
+
+void switchTranslator(QTranslator& tr, const QString& filename)
+{
+	qApp->removeTranslator(&tr);
+
+	QString path = QApplication::applicationDirPath() + "/translations/";
+	if (tr.load(path + filename))
+		qApp->installTranslator(&tr);
+}
+
+void MainWindow::_loadLanguage(const QString& langID)
+{
+	if (currLang != langID)
+	{
+		currLang = langID;
+
+		QLocale locale = QLocale(currLang);
+		QLocale::setDefault(locale);
+		QString langName = QLocale::languageToString(locale.language());
+
+		switchTranslator(leTrans, QString("qt_%1.qm").arg(langID));
+		switchTranslator(leTransQt, QString("qt_%1.qm").arg(langID));
+
 	}
 }
