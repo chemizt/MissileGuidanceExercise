@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->plot->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
 	ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui->plot->graph(1)->setPen(QPen(QColor("blue")));
-	
+
 	ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 
 	std::thread dataPrepThread([&]{ prepareHitRadData(); });
@@ -57,6 +57,7 @@ void MainWindow::on_startSimBtn_clicked()
 	
 	leMsl->setCoords(0, 0);
 	leMsl->setVelocity(0, ui->mslSpeedSpinBox->value());
+	leMsl->setNavConstant(ui->navConstDoubleSpinBox->value());
 
 	ui->outputLabel->clear();
 	ui->outputLabel->setText("Simulation's running; please wait");

@@ -15,8 +15,8 @@ class MovingObject // базовый класс движущихся объек�
 		double getSpeed() { return _actingVectors.at("velocity").length(); }
 		double getX() { return _coordinates.x(); }
 		double getY() { return _coordinates.y(); }
-		QVector2D getCoordinates() { return _coordinates; }
-		QVector2D getVelocity() { return _actingVectors.at("velocity"); }
+		const QVector2D& getCoordinates() { return _coordinates; }
+		const QVector2D& getVelocity() { return _actingVectors.at("velocity"); }
 		void setVelocity(const QVector2D& newVel)
 		{
 			auto& velVec = _actingVectors.at("velocity");
@@ -38,7 +38,7 @@ class MovingObject // базовый класс движущихся объек�
 		std::unordered_map<QString, QVector2D> _actingVectors;
 		QVector2D _coordinates;
 		std::mt19937_64 _leMersenneTwister;
-		double timeSinceBirth{ 0 };
+		double _timeSinceBirth{ 0 };
 		double _getRandomInRange(double minValue, double maxValue);
 		void _rotateActingVectorsRad(double angle); // поворачивает действующие на объект векторы в соответствии с углом, на который поворачивает объект
 };

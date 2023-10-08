@@ -4,7 +4,6 @@
 
 Missile::Missile(double initialSpeed, double initialX, double initialY) : MovingObject(initialSpeed, initialX, initialY)
 {
-	_acquiredTarget = nullptr;
 }
 
 void Missile::basicMove(double elapsedTime, double angleOfAttack)
@@ -18,17 +17,17 @@ void Missile::basicMove(double elapsedTime, double angleOfAttack)
 	// потребляем топливо
 	_remainingFuelMass -= std::min(_fuelConsumptionRate * elapsedTime, _remainingFuelMass);
 
-	timeSinceBirth += SIM_RESOLUTION;
+	_timeSinceBirth += SIM_RESOLUTION;
 }
 
 void Missile::advancedMove(double elapsedTime)
 {
 	double steeringAngle = 0;
 
-	if (_acquiredTarget && timeSinceBirth >= 0.5)
+	if (_acquiredTarget && _timeSinceBirth >= _leDesc.apDelay)
 	{
 		QVector2D velocity = _actingVectors.at("velocity");
-		QVector2D trgLOSVec = _acquiredTarget->getCoordinates() - this->getCoordinates();
+		QVector2D trgLOSVec = _acquiredTarget->getCoordinates() - getCoordinates();
 		double velLOSAngle = getAngleBetweenVectorsRad(velocity.normalized(), trgLOSVec.normalized());
 
 		if (abs(velLOSAngle) > degToRad(_leDesc.seekerMaxOBA))

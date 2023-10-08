@@ -21,6 +21,7 @@ class Missile : public MovingObject // класс ракет
 			double proxyFuzeRadius				= 15;	// радиус поражения цели (срабатывания НВ)
 			double seekerMaxOBA					= 15;	// ширина ПЗ ГСН в одну сторону
 			double navConstant					= 1.5;	// постоянная наведения
+			double apDelay						= 0.5;	// задержка вкл. автопилота
 			QMap<QString, double> cXData {{"0.5", 0.012}, {"0.9", 0.015}, {"1.2", 0.046}, {"1.5", 0.044}, {"2.0", 0.038}, {"3.0", 0.030}, {"4.0", 0.026}};
 		};
 		Missile(double initialSpeed, double initialX, double initialY);
@@ -30,13 +31,13 @@ class Missile : public MovingObject // класс ракет
 		void advancedMove(double elapsedTime);
 		void basicMove(double elapsedTime, double angleOfAttack);
 		void setTarget(MovingObject* newTarget) { _acquiredTarget = newTarget; };
-		void setNavConstant(double mslNavConstant);
+		void setNavConstant(double mslNavConstant) { _leDesc.navConstant = mslNavConstant; };
 		virtual void restore() { _remainingFuelMass = _leDesc.motorFuelMass; };
 
 	private:
 		const MissileDesc _leDesc;
-		PIDController* _guidanceComputer;
-		MovingObject* _acquiredTarget;
+		PIDController* _guidanceComputer{ nullptr };
+		MovingObject* _acquiredTarget{ nullptr };
 		const double _fuelConsumptionRate{ _leDesc.motorFuelMass / _leDesc.motorBurnTime };
 		const double _engineThrust{ _leDesc.motorSpecImpulse * _fuelConsumptionRate * FREEFALL_ACC };
 		double _remainingFuelMass{ _leDesc.motorFuelMass };

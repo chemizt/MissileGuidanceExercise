@@ -30,7 +30,7 @@ void Target::basicMove(double elapsedTime)
 	_rotateActingVectorsRad(getAngleBetweenVectorsRad(positionDelta.normalized(), _actingVectors.at("velocity").normalized()));
 
 	_coordinates += positionDelta;
-	timeSinceBirth += SIM_RESOLUTION;
+	_timeSinceBirth += SIM_RESOLUTION;
 }
 
 void Target::setAccelerationRate(double newAccelerationRate)
@@ -42,17 +42,23 @@ void Target::advancedMove(double elapsedTime)
 {
 	basicMove(elapsedTime);
 
-	_timeSinceAccelerationChange += elapsedTime;
+	if (_isEvasiveActionRequired)
+	{
+		_timeSinceAccelerationChange += elapsedTime;
 
-	if (_timeSinceAccelerationChange >= _timeToProceedWithAcceleration)
-		_setUpAccelerationParameters();
+		if (_timeSinceAccelerationChange >= _timeToProceedWithAcceleration)
+			_setUpAccelerationParameters();
+	}
 }
 
 inline void Target::_setUpAccelerationParameters()
 {
-	using namespace TargetParameters;
+	if (_isEvasiveActionRequired)
+	{
+		using namespace TargetParameters;
 
-	_timeSinceAccelerationChange = 0;
-	_timeToProceedWithAcceleration = _getRandomInRange(evManeuverTimeConstraints.first, evManeuverTimeConstraints.second);	// задаём случайное время следования с новым ускорением
-	setAccelerationRate(_getRandomInRange(evManeuverAccelConstraints.first, evManeuverAccelConstraints.second));			// меняем ускорение
+		_timeSinceAccelerationChange = 0;
+		_timeToProceedWithAcceleration = _getRandomInRange(evManeuverTimeConstraints.first, evManeuverTimeConstraints.second);	// задаём случайное время следования с новым ускорением
+		setAccelerationRate(_getRandomInRange(evManeuverAccelConstraints.first, evManeuverAccelConstraints.second));			// меняем ускорение
+	}
 }
