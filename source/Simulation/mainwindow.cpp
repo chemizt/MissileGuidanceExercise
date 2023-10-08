@@ -36,6 +36,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	std::thread dataPrepThread([&]{ prepareHitRadData(); });
 	dataPrepThread.detach();
+
+	_createLangMenu();
 }
 
 MainWindow::~MainWindow()
@@ -229,7 +231,7 @@ void MainWindow::_createLangMenu(void)
 	{
 		QString locale = fName;
 		locale.truncate(locale.lastIndexOf('.'));
-		locale.remove(0, locale.lastIndexOf('_'));
+		locale.remove(0, locale.lastIndexOf('_') + 1);
 
 		QString lang = QLocale::languageToString(QLocale(locale).language());
 		auto action = new QAction(lang, this);
