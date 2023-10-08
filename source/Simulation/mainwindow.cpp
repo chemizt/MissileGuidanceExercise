@@ -54,6 +54,7 @@ void MainWindow::on_startSimBtn_clicked()
 	
 	leTgt->setCoords(0, ui->distanceSpinBox->value());
 	leTgt->setVelocity(0, -ui->tgtSpeedSpinBox->value());
+	leTgt->setEvasiveActionState(ui->tgtEvActCheckBox->isChecked());
 	
 	leMsl->setCoords(0, 0);
 	leMsl->setVelocity(0, ui->mslSpeedSpinBox->value());
