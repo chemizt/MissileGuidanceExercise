@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(MissileGuidanceExercise LANGUAGES CXX)
+project(MGE64 LANGUAGES CXX)
 
 set(BIN_OUTPUT_ROOT ${CMAKE_SOURCE_DIR}/out)
 
