@@ -1,8 +1,7 @@
 name: Windows Build&Deploy
 
-on:
-  push:
-      
+on: [ push, workflow_dispatch ]
+
 jobs:
   build-windows:
     uses: ./.github/workflows/CommonBuild.yml

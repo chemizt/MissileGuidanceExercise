@@ -1,8 +1,7 @@
 name: Linux Build&Deploy
 
-on:
-  push:
-      
+on: [ push, workflow_dispatch ]
+
 jobs:
   build-linux:
     uses: ./.github/workflows/CommonBuild.yml
