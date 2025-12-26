@@ -10,4 +10,4 @@ jobs:
       build-for-flair:  Linux
       build-with:       gcc_64
       cmake-generator:  "Unix Makefiles"
-      runner-os:        ubuntu-20.04
+      runner-os:        ubuntu-latest
