@@ -1,8 +1,7 @@
 name: Linux Build&Deploy
 
-on:
-  push:
-      
+on: [ push, workflow_dispatch ]
+
 jobs:
   build-linux:
     uses: ./.github/workflows/CommonBuild.yml
@@ -11,4 +10,4 @@ jobs:
       build-for-flair:  Linux
       build-with:       gcc_64
       cmake-generator:  "Unix Makefiles"
-      runner-os:        ubuntu-20.04
+      runner-os:        ubuntu-22.04
